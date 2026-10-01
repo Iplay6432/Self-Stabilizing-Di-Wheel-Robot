@@ -134,64 +134,32 @@ using
 
 \subsection{Kinetic Energy}
 
-The velocity of the pendulum-body center of mass is obtained by
-differentiating \eqref{eq:body_position}:
+We can consider the translational kinetic energy of each of the bodies summed to 
+be equivalent to that of a single body with their combined mass and and linear 
+velocity equal to that of the wheel's axis.
+Since z is constant, and 
+\begin{equation*}
+    \dot{z} = 0,
+    \label{eq:constant_z}
+\end{equation*}
+this lets us derive the translational kinetic energy to be
 \begin{equation}
-    \dot{x}_{\mathrm b}
+    T_{\mathrm trans}
     =
-    \dot{x}
-    +
-    \ell\dot{\theta}\cos\theta,
-    \label{eq:body_x_velocity}
+    \frac{1}{2}(m_{\mathrm b}+m_{\mathrm w})\dot{x}^{\,2}
+    \label{eq:translational_kinetic_energy}
 \end{equation}
-and
+This approach unfortunately does not account for the translational motion that results fromt the robot's body.
+As such we add a correction term for the robot's body translational motion.
 \begin{equation}
-    \dot{z}_{\mathrm b}
+    T_{\mathrm corr}
     =
-    -\ell\dot{\theta}\sin\theta.
-    \label{eq:body_z_velocity}
-\end{equation}
-
-Therefore, the squared speed of the pendulum-body center of mass is
-\begin{align}
-    v_{\mathrm b}^2
-    &=
-    \dot{x}_{\mathrm b}^{\,2}
-    +
-    \dot{z}_{\mathrm b}^{\,2}
+    \frac{1}{2}m_{\mathrm b}\dot{x}^{\,2}m_{\mathrm b}\ell
+    \dot{x}\dot{\theta}\cos\theta
     \nonumber\\
-    &=
-    \dot{x}^{\,2}
-    +
-    2\ell\dot{x}\dot{\theta}\cos\theta
-    +
-    \ell^2\dot{\theta}^{\,2}.
-    \label{eq:body_speed}
-\end{align}
-
-The translational kinetic energy of the wheel and axle assembly is
-\begin{equation}
-    T_{\mathrm w,trans}
-    =
-    \frac{1}{2}m_{\mathrm w}\dot{x}^{\,2}.
-    \label{eq:wheel_translational_energy}
+    &\quad
+    \label{eq:correction_kinetic_energy}
 \end{equation}
-
-The translational kinetic energy of the pendulum body is
-\begin{equation}
-    T_{\mathrm b,trans}
-    =
-    \frac{1}{2}m_{\mathrm b}
-    \left(
-        \dot{x}^{\,2}
-        +
-        2\ell\dot{x}\dot{\theta}\cos\theta
-        +
-        \ell^2\dot{\theta}^{\,2}
-    \right).
-    \label{eq:body_translational_energy}
-\end{equation}
-
 The rotational kinetic energy of the pendulum body is
 \begin{equation}
     T_{\mathrm b,rot}
@@ -211,9 +179,9 @@ Thus, the total kinetic energy is
 \begin{align}
     T
     &=
-    T_{\mathrm w,trans}
+    T_{\mathrm trans}
     +
-    T_{\mathrm b,trans}
+    T_{\mathrm corr}
     +
     T_{\mathrm b,rot}
     +
@@ -418,122 +386,7 @@ The first term represents the rotational inertia of the pendulum
 body, the second represents translational--rotational coupling, and
 the third represents the gravitational torque.
 
-\subsection{Nonlinear State Equations}
 
-The nonlinear equations of motion can be written in matrix form as
-\begin{equation}
-    \bm{M}(\theta)
-    \begin{bmatrix}
-        \ddot{x}\\
-        \ddot{\theta}
-    \end{bmatrix}
-    +
-    \bm{h}(\theta,\dot{\theta})
-    +
-    \bm{g}(\theta)
-    =
-    \bm{B}M_{\mathrm{mot}},
-    \label{eq:matrix_form}
-\end{equation}
-where
-\begin{equation}
-    \bm{M}(\theta)
-    =
-    \begin{bmatrix}
-        m_{\mathrm b}
-        +
-        m_{\mathrm w}
-        +
-        I_{\mathrm w}/r_{\mathrm w}^{\,2}
-        &
-        m_{\mathrm b}\ell\cos\theta
-        \\[4pt]
-        m_{\mathrm b}\ell\cos\theta
-        &
-        I_{\mathrm b}
-        +
-        m_{\mathrm b}\ell^2
-    \end{bmatrix},
-    \label{eq:mass_matrix}
-\end{equation}
-\begin{equation}
-    \bm{h}(\theta,\dot{\theta})
-    =
-    \begin{bmatrix}
-        -m_{\mathrm b}\ell
-        \sin\theta\,\dot{\theta}^{\,2}
-        \\
-        0
-    \end{bmatrix},
-    \label{eq:velocity_vector}
-\end{equation}
-\begin{equation}
-    \bm{g}(\theta)
-    =
-    \begin{bmatrix}
-        0
-        \\
-        -m_{\mathrm b}g\ell\sin\theta
-    \end{bmatrix},
-    \label{eq:gravity_vector}
-\end{equation}
-and
-\begin{equation}
-    \bm{B}
-    =
-    \begin{bmatrix}
-        -1/r_{\mathrm w}
-        \\
-        1
-    \end{bmatrix}.
-    \label{eq:input_vector}
-\end{equation}
-
-\subsection{Linearization About the Upright Equilibrium}
-
-For small angular displacements about the upright equilibrium,
-\begin{equation}
-    \theta \approx 0,
-    \qquad
-    \sin\theta\approx\theta,
-    \qquad
-    \cos\theta\approx1.
-    \label{eq:small_angle}
-\end{equation}
-
-Neglecting second-order terms such as
-$\theta\dot{\theta}^{\,2}$, the linearized equations become
-\begin{equation}
-    \left(
-        m_{\mathrm b}
-        +
-        m_{\mathrm w}
-        +
-        \frac{I_{\mathrm w}}{r_{\mathrm w}^{\,2}}
-    \right)
-    \ddot{x}
-    +
-    m_{\mathrm b}\ell\ddot{\theta}
-    =
-    -\frac{M_{\mathrm{mot}}}{r_{\mathrm w}},
-    \label{eq:linear_translation}
-\end{equation}
-and
-\begin{equation}
-    m_{\mathrm b}\ell\ddot{x}
-    +
-    \left(
-        I_{\mathrm b}
-        +
-        m_{\mathrm b}\ell^2
-    \right)
-    \ddot{\theta}
-    -
-    m_{\mathrm b}g\ell\theta
-    =
-    M_{\mathrm{mot}}.
-    \label{eq:linear_angular}
-\end{equation}
 
 \subsection{Symbol and Coordinate Definitions}
 
