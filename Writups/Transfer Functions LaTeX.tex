@@ -1,1 +1,39 @@
+\documentclass[journal]{IEEEtran}
 
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{bm}
+\usepackage{booktabs}
+\usepackage{array}
+
+\begin{document}
+
+\section{Laplace Transform and Transfer Functions}
+
+Oftentimes, a differential equation or closed loop system is too complicated to effectively derive a time-dependent solution. 
+This desire is further hindered when we consider the tuning of control systems, 
+where it is important to have more mathematically robust ways to measure effective tuning. 
+This is where the concept of the Laplace Transform and Transfer Functions emerge. 
+
+\subsection{Laplace Transform Basics}
+
+The Laplace Transform is a tool that can analyze frequencies in a given function $f\(t\)$, where a complex frequency s 
+is a component of the function when the transform doesn't converge. 
+The function is represented by the improper integral below:
+\begin{equation}
+\mathcal{L}\{f(t)\} = \int_{0}^{\infty} e^{-st}f(t)\,dt
+\end{equation}
+The $e^(-st)$ component mechanically causes the integral to diverge, since when the frequency $s$ is represented in the function, 
+the integrand becomes purely positive or purely negative.
+
+\subsection{Applications of the Laplace Transform}
+
+Extracting the frequency $s = \sigma + j \omega$ provides value further than attempting to recreate the function. 
+If we know the value of $\omega$, which is an angular frequency, we can derive values about the rate of convergence, 
+and if we know the value of $\sigma$, we can determine how the function oscillates around its value of convergence. 
+On top of this, the Laplace Transform has applications in differential equations relating to how it evaluates for derivatives and integrals. 
+
+
+
+
+\end{document}
