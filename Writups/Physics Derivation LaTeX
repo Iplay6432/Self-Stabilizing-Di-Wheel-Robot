@@ -1,0 +1,640 @@
+\documentclass[journal]{IEEEtran}
+
+
+\usepackage{amsmath,amssymb,bm}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{siunitx}
+
+\begin{document}
+
+\section{Lagrangian Formulation}
+
+The dynamics of the inverted pendulum are derived using the
+Euler--Lagrange formulation. The Lagrangian is defined as
+\begin{equation}
+    \mathcal{L}=T-V,
+    \label{eq:lagrangian_definition}
+\end{equation}
+where $T$ is the total kinetic energy and $V$ is the gravitational
+potential energy.
+
+For a system with generalized coordinates $q_i$, the
+Euler--Lagrange equations are
+\begin{equation}
+    \frac{\mathrm{d}}{\mathrm{d}t}
+    \left(
+        \frac{\partial \mathcal{L}}
+        {\partial \dot{q}_i}
+    \right)
+    -
+    \frac{\partial \mathcal{L}}
+    {\partial q_i}
+    =
+    Q_i^{\mathrm{nc}},
+    \label{eq:euler_lagrange}
+\end{equation}
+where $Q_i^{\mathrm{nc}}$ is the nonconservative generalized force
+associated with the generalized coordinate $q_i$.
+
+\subsection{Coordinate System and Definitions}
+
+The system is described using an inertial Cartesian coordinate frame
+$\mathcal{F}_I$. The $x$ axis is horizontal and positive to the right,
+while the $z$ axis is vertical and positive upward.
+
+The wheel axle is located at
+\begin{equation}
+    \bm{r}_{\mathrm{w}}
+    =
+    \begin{bmatrix}
+        x\\
+        z
+    \end{bmatrix},
+    \label{eq:wheel_position}
+\end{equation}
+where $z$ is treated as constant.
+
+The center of mass of the pendulum body is located at
+\begin{equation}
+    \bm{r}_{\mathrm{b}}
+    =
+    \begin{bmatrix}
+        x_{\mathrm b}\\
+        z_{\mathrm b}
+    \end{bmatrix}
+    =
+    \begin{bmatrix}
+        x+\ell\sin\theta\\
+        z+\ell\cos\theta
+    \end{bmatrix}.
+    \label{eq:body_position}
+\end{equation}
+
+The angle $\theta$ is measured clockwise from the positive $z$ axis.
+Consequently, $\theta=0$ corresponds to the upright equilibrium
+configuration of the inverted pendulum.
+
+The generalized coordinates are selected as
+\begin{equation}
+    q_1=x,
+    \qquad
+    q_2=\theta,
+    \qquad
+    q_3=\phi_{\mathrm w},
+    \label{eq:generalized_coordinates}
+\end{equation}
+where $\phi_{\mathrm w}$ is the angular position of the wheel. The
+corresponding angular velocity is
+\begin{equation}
+    \omega_{\mathrm w}
+    =
+    \dot{\phi}_{\mathrm w}.
+    \label{eq:wheel_angular_velocity}
+\end{equation}
+
+\subsection{Rolling Constraint}
+
+Assuming pure rolling without slip, the translational and rotational
+motions of the wheel are related by
+\begin{equation}
+    \dot{x}
+    =
+    r_{\mathrm w}\dot{\phi}_{\mathrm w},
+    \label{eq:rolling_velocity_constraint}
+\end{equation}
+where $r_{\mathrm w}$ is the wheel radius.
+
+Equivalently, the integrated constraint can be written as
+\begin{equation}
+    x-r_{\mathrm w}\phi_{\mathrm w}
+    =
+    C,
+    \label{eq:rolling_position_constraint}
+\end{equation}
+where $C$ is a constant determined by the initial configuration.
+
+The constraint is enforced using a Lagrange multiplier
+$\lambda$. The corresponding constrained Euler--Lagrange equations
+are
+\begin{equation}
+    \frac{\mathrm{d}}{\mathrm{d}t}
+    \left(
+        \frac{\partial\mathcal{L}}
+        {\partial\dot{q}_i}
+    \right)
+    -
+    \frac{\partial\mathcal{L}}
+    {\partial q_i}
+    =
+    Q_i^{\mathrm{nc}}
+    +
+    \lambda
+    \frac{\partial f}{\partial q_i},
+    \label{eq:constrained_euler_lagrange}
+\end{equation}
+where
+\begin{equation}
+    f(q)
+    =
+    x-r_{\mathrm w}\phi_{\mathrm w}-C
+    =
+    0.
+    \label{eq:constraint_function}
+\end{equation}
+
+With this convention, $\lambda$ corresponds to the horizontal
+wheel--ground traction force.
+
+\subsection{Kinetic Energy}
+
+The total kinetic energy consists of the translational kinetic energy
+of the wheel and axle assembly, the translational and rotational
+kinetic energies of the pendulum body, and the rotational kinetic
+energy of the wheel.
+
+Differentiating \eqref{eq:body_position} gives
+\begin{equation}
+    \dot{x}_{\mathrm b}
+    =
+    \dot{x}
+    +
+    \ell\dot{\theta}\cos\theta,
+    \qquad
+    \dot{z}_{\mathrm b}
+    =
+    -
+    \ell\dot{\theta}\sin\theta.
+    \label{eq:body_velocity_components}
+\end{equation}
+
+Therefore, the squared speed of the pendulum-body center of mass is
+\begin{align}
+    v_{\mathrm b}^2
+    &=
+    \dot{x}_{\mathrm b}^{\,2}
+    +
+    \dot{z}_{\mathrm b}^{\,2}
+    \nonumber\\
+    &=
+    \dot{x}^{\,2}
+    +
+    2\ell\dot{x}\dot{\theta}\cos\theta
+    +
+    \ell^2\dot{\theta}^{\,2}.
+    \label{eq:body_speed}
+\end{align}
+
+The translational kinetic energy of the wheel and axle assembly is
+\begin{equation}
+    T_{\mathrm w,trans}
+    =
+    \frac{1}{2}m_{\mathrm w}\dot{x}^{\,2}.
+    \label{eq:wheel_translational_ke}
+\end{equation}
+
+The translational kinetic energy of the pendulum body is
+\begin{equation}
+    T_{\mathrm b,trans}
+    =
+    \frac{1}{2}m_{\mathrm b}
+    \left(
+        \dot{x}^{\,2}
+        +
+        2\ell\dot{x}\dot{\theta}\cos\theta
+        +
+        \ell^2\dot{\theta}^{\,2}
+    \right).
+    \label{eq:body_translational_ke}
+\end{equation}
+
+The rotational kinetic energy of the pendulum body is
+\begin{equation}
+    T_{\mathrm b,rot}
+    =
+    \frac{1}{2}I_{\mathrm b}\dot{\theta}^{\,2},
+    \label{eq:body_rotational_ke}
+\end{equation}
+and the rotational kinetic energy of the wheel is
+\begin{equation}
+    T_{\mathrm w,rot}
+    =
+    \frac{1}{2}I_{\mathrm w}\dot{\phi}_{\mathrm w}^{\,2}.
+    \label{eq:wheel_rotational_ke}
+\end{equation}
+
+Therefore, the total kinetic energy is
+\begin{align}
+    T
+    &=
+    T_{\mathrm w,trans}
+    +
+    T_{\mathrm b,trans}
+    +
+    T_{\mathrm b,rot}
+    +
+    T_{\mathrm w,rot}
+    \nonumber\\
+    &=
+    \frac{1}{2}
+    (m_{\mathrm b}+m_{\mathrm w})
+    \dot{x}^{\,2}
+    +
+    m_{\mathrm b}\ell
+    \dot{x}\dot{\theta}\cos\theta
+    \nonumber\\
+    &\quad
+    +
+    \frac{1}{2}
+    \left(
+        I_{\mathrm b}
+        +
+        m_{\mathrm b}\ell^2
+    \right)
+    \dot{\theta}^{\,2}
+    +
+    \frac{1}{2}
+    I_{\mathrm w}
+    \dot{\phi}_{\mathrm w}^{\,2}.
+    \label{eq:total_kinetic_energy}
+\end{align}
+
+\subsection{Potential Energy}
+
+The gravitational potential energy of the pendulum body is
+\begin{equation}
+    V
+    =
+    m_{\mathrm b}g z_{\mathrm b}.
+    \label{eq:gravitational_potential_general}
+\end{equation}
+
+Substituting \eqref{eq:body_position} gives
+\begin{equation}
+    V
+    =
+    m_{\mathrm b}g
+    \left(
+        z+\ell\cos\theta
+    \right).
+    \label{eq:gravitational_potential}
+\end{equation}
+
+Since $z$ is constant, the term $m_{\mathrm b}gz$ is a constant and
+does not affect the equations of motion. Therefore, the potential
+energy may be written as
+\begin{equation}
+    V
+    =
+    m_{\mathrm b}g\ell\cos\theta.
+    \label{eq:potential_energy}
+\end{equation}
+
+\subsection{Lagrangian}
+
+Combining the kinetic and potential energies gives
+\begin{align}
+    \mathcal{L}
+    &=
+    \frac{1}{2}
+    (m_{\mathrm b}+m_{\mathrm w})
+    \dot{x}^{\,2}
+    +
+    m_{\mathrm b}\ell
+    \dot{x}\dot{\theta}\cos\theta
+    \nonumber\\
+    &\quad
+    +
+    \frac{1}{2}
+    \left(
+        I_{\mathrm b}
+        +
+        m_{\mathrm b}\ell^2
+    \right)
+    \dot{\theta}^{\,2}
+    +
+    \frac{1}{2}
+    I_{\mathrm w}
+    \dot{\phi}_{\mathrm w}^{\,2}
+    -
+    m_{\mathrm b}g\ell\cos\theta.
+    \label{eq:lagrangian}
+\end{align}
+
+\subsection{Equations of Motion}
+
+The motor applies equal and opposite torques to the wheel and
+pendulum body. Thus, the nonconservative generalized forces associated
+with the motor are
+\begin{equation}
+    Q_x^{\mathrm{nc}}=0,
+    \qquad
+    Q_\theta^{\mathrm{nc}}=-M_{\mathrm{mot}},
+    \qquad
+    Q_{\phi_{\mathrm w}}^{\mathrm{nc}}=M_{\mathrm{mot}},
+    \label{eq:generalized_motor_forces}
+\end{equation}
+where $M_{\mathrm{mot}}$ is the motor torque.
+
+\subsubsection{Axle Translation}
+
+Applying the constrained Euler--Lagrange equation to $x$ gives
+\begin{equation}
+    (m_{\mathrm b}+m_{\mathrm w})\ddot{x}
+    +
+    m_{\mathrm b}\ell
+    \left(
+        \ddot{\theta}\cos\theta
+        -
+        \dot{\theta}^{\,2}\sin\theta
+    \right)
+    =
+    \lambda.
+    \label{eq:axle_equation}
+\end{equation}
+
+Because $\lambda$ represents the horizontal wheel--ground traction
+force under the selected sign convention,
+\begin{equation}
+    F_{\mathrm f}=\lambda.
+    \label{eq:traction_force}
+\end{equation}
+
+\subsubsection{Pendulum-Body Rotation}
+
+Applying the Euler--Lagrange equation to $\theta$ gives
+\begin{equation}
+    \left(
+        I_{\mathrm b}
+        +
+        m_{\mathrm b}\ell^2
+    \right)
+    \ddot{\theta}
+    +
+    m_{\mathrm b}\ell
+    \ddot{x}\cos\theta
+    -
+    m_{\mathrm b}g\ell\sin\theta
+    =
+    -M_{\mathrm{mot}}.
+    \label{eq:body_angular_equation}
+\end{equation}
+
+The first term represents the angular inertia of the pendulum body,
+the second represents translational--rotational coupling, and the
+third represents the gravitational torque.
+
+\subsubsection{Wheel Rotation}
+
+Applying the constrained Euler--Lagrange equation to
+$\phi_{\mathrm w}$ gives
+\begin{equation}
+    I_{\mathrm w}\ddot{\phi}_{\mathrm w}
+    =
+    M_{\mathrm{mot}}
+    -
+    r_{\mathrm w}\lambda.
+    \label{eq:wheel_equation}
+\end{equation}
+
+Using the no-slip constraint,
+\begin{equation}
+    \ddot{\phi}_{\mathrm w}
+    =
+    \frac{\ddot{x}}{r_{\mathrm w}},
+    \label{eq:wheel_acceleration_constraint}
+\end{equation}
+and therefore
+\begin{equation}
+    \lambda
+    =
+    \frac{M_{\mathrm{mot}}}{r_{\mathrm w}}
+    -
+    \frac{I_{\mathrm w}}{r_{\mathrm w}^{\,2}}\ddot{x}.
+    \label{eq:traction_force_explicit}
+\end{equation}
+
+Thus, the wheel--ground traction force is not generally equal to
+$M_{\mathrm{mot}}/r_{\mathrm w}$. The difference accounts for the
+angular acceleration of the wheel.
+
+\subsection{Reduced Equations of Motion}
+
+Substituting \eqref{eq:traction_force_explicit} into
+\eqref{eq:axle_equation} gives
+\begin{align}
+    \left(
+        m_{\mathrm b}
+        +
+        m_{\mathrm w}
+        +
+        \frac{I_{\mathrm w}}{r_{\mathrm w}^{\,2}}
+    \right)
+    \ddot{x}
+    +
+    m_{\mathrm b}\ell\cos\theta
+    \ddot{\theta}
+    -
+    m_{\mathrm b}\ell
+    \sin\theta\,\dot{\theta}^{\,2}
+    =
+    \frac{M_{\mathrm{mot}}}{r_{\mathrm w}}.
+    \label{eq:reduced_translation}
+\end{align}
+
+Together with the pendulum-body equation,
+\begin{equation}
+    \left(
+        I_{\mathrm b}
+        +
+        m_{\mathrm b}\ell^2
+    \right)
+    \ddot{\theta}
+    +
+    m_{\mathrm b}\ell\cos\theta
+    \ddot{x}
+    -
+    m_{\mathrm b}g\ell\sin\theta
+    =
+    -M_{\mathrm{mot}},
+    \label{eq:reduced_rotation}
+\end{equation}
+the system dynamics are described by two coupled nonlinear
+differential equations in $x$ and $\theta$.
+
+These equations can be expressed in matrix form as
+\begin{equation}
+    \bm{M}(q)
+    \begin{bmatrix}
+        \ddot{x}\\
+        \ddot{\theta}
+    \end{bmatrix}
+    +
+    \bm{h}(q,\dot{q})
+    +
+    \bm{g}(q)
+    =
+    \bm{B}M_{\mathrm{mot}},
+    \label{eq:matrix_dynamics}
+\end{equation}
+where
+\begin{equation}
+    \bm{M}(q)
+    =
+    \begin{bmatrix}
+        m_{\mathrm b}
+        +m_{\mathrm w}
+        +I_{\mathrm w}/r_{\mathrm w}^{\,2}
+        &
+        m_{\mathrm b}\ell\cos\theta
+        \\[4pt]
+        m_{\mathrm b}\ell\cos\theta
+        &
+        I_{\mathrm b}
+        +m_{\mathrm b}\ell^2
+    \end{bmatrix},
+    \label{eq:mass_matrix}
+\end{equation}
+\begin{equation}
+    \bm{h}(q,\dot{q})
+    =
+    \begin{bmatrix}
+        -m_{\mathrm b}\ell
+        \sin\theta\,\dot{\theta}^{\,2}\\
+        0
+    \end{bmatrix},
+    \label{eq:centrifugal_vector}
+\end{equation}
+\begin{equation}
+    \bm{g}(q)
+    =
+    \begin{bmatrix}
+        0\\
+        -m_{\mathrm b}g\ell\sin\theta
+    \end{bmatrix},
+    \label{eq:gravity_vector}
+\end{equation}
+and
+\begin{equation}
+    \bm{B}
+    =
+    \begin{bmatrix}
+        1/r_{\mathrm w}\\
+        -1
+    \end{bmatrix}.
+    \label{eq:input_matrix}
+\end{equation}
+
+\subsection{Symbol and Coordinate Definitions}
+
+\begin{table}[t]
+\centering
+\caption{Symbols and coordinate definitions.}
+\label{tab:symbol_definitions}
+\renewcommand{\arraystretch}{1.1}
+\begin{tabular}{>{\raggedright\arraybackslash}p{0.20\linewidth}
+                >{\raggedright\arraybackslash}p{0.70\linewidth}}
+\toprule
+Symbol & Definition \\
+\midrule
+
+$\mathcal{F}_I$
+& Inertial Cartesian coordinate frame. \\
+
+$x$
+& Horizontal position of the wheel axle, positive to the right. \\
+
+$z$
+& Vertical position of the wheel axle, positive upward; treated as constant. \\
+
+$\theta$
+& Pendulum-body angle measured clockwise from the positive $z$ axis;
+$\theta=0$ corresponds to the upright configuration. \\
+
+$\phi_{\mathrm w}$
+& Angular position of the wheel. \\
+
+$\omega_{\mathrm w}$
+& Wheel angular velocity, $\omega_{\mathrm w}=\dot{\phi}_{\mathrm w}$. \\
+
+$\bm r_{\mathrm w}$
+& Position vector of the wheel axle. \\
+
+$\bm r_{\mathrm b}$
+& Position vector of the pendulum-body center of mass. \\
+
+$x_{\mathrm b},z_{\mathrm b}$
+& Horizontal and vertical coordinates of the pendulum-body center
+of mass. \\
+
+$\ell$
+& Distance from the wheel axle to the pendulum-body center of mass. \\
+
+$r_{\mathrm w}$
+& Wheel radius. \\
+
+$m_{\mathrm b}$
+& Mass of the pendulum body. \\
+
+$m_{\mathrm w}$
+& Mass of the wheel and axle assembly. \\
+
+$I_{\mathrm b}$
+& Mass moment of inertia of the pendulum body about its center of mass. \\
+
+$I_{\mathrm w}$
+& Mass moment of inertia of the wheel and axle assembly about the
+wheel axis. \\
+
+$g$
+& Gravitational acceleration. \\
+
+$T$
+& Total kinetic energy of the system. \\
+
+$V$
+& Gravitational potential energy of the system. \\
+
+$\mathcal{L}$
+& Lagrangian, $\mathcal{L}=T-V$. \\
+
+$q_i$
+& $i$th generalized coordinate. \\
+
+$Q_i^{\mathrm{nc}}$
+& Nonconservative generalized force associated with $q_i$. \\
+
+$M_{\mathrm{mot}}$
+& Motor torque applied between the wheel and pendulum body. \\
+
+$F_{\mathrm f}$
+& Horizontal wheel--ground traction force. \\
+
+$\lambda$
+& Lagrange multiplier associated with the no-slip rolling constraint;
+under the selected sign convention, $\lambda=F_{\mathrm f}$. \\
+
+$C$
+& Constant determined by the initial condition of the rolling
+constraint. \\
+
+$\bm M(q)$
+& Configuration-dependent mass matrix of the reduced system. \\
+
+$\bm h(q,\dot q)$
+& Velocity-dependent nonlinear term vector. \\
+
+$\bm g(q)$
+& Gravitational generalized-force vector. \\
+
+$\bm B$
+& Actuator input vector. \\
+
+$t$
+& Time. \\
+
+\bottomrule
+\end{tabular}
+\end{table}
+
+\end{document}
