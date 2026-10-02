@@ -5,6 +5,7 @@
 \usepackage{bm}
 \usepackage{booktabs}
 \usepackage{array}
+\usepackage{float}
 
 \begin{document}
 
@@ -134,44 +135,56 @@ using
 
 \subsection{Kinetic Energy}
 
-We can consider the translational kinetic energy of each of the bodies summed to 
-be equivalent to that of a single body with their combined mass and and linear 
-velocity equal to that of the wheel's axis.
-Since z is constant, and 
+The translational kinetic energy of the wheel and pendulum body can
+first be represented using the combined mass and the horizontal
+velocity of the wheel axis. Since $z$ is constant,
 \begin{equation*}
-    \dot{z} = 0,
-    \label{eq:constant_z}
+    \dot{z}=0.
 \end{equation*}
-this lets us derive the translational kinetic energy to be
+
+The translational kinetic energy is therefore
 \begin{equation}
-    T_{\mathrm trans}
+    T_{\mathrm{trans}}
     =
-    \frac{1}{2}(m_{\mathrm b}+m_{\mathrm w})\dot{x}^{\,2}
+    \frac{1}{2}
+    (m_{\mathrm b}+m_{\mathrm w})
+    \dot{x}^{\,2},
     \label{eq:translational_kinetic_energy}
 \end{equation}
-This approach unfortunately does not account for the translational motion that results fromt the robot's body.
-As such we add a correction term for the robot's body translational motion.
+where $m_{\mathrm b}$ and $m_{\mathrm w}$ are the masses of the
+pendulum body and wheel assembly, respectively.
+
+This expression does not account for the additional translational motion
+of the pendulum body center of mass caused by its angular displacement.
+The corresponding correction term is
 \begin{equation}
-    T_{\mathrm corr}
+    T_{\mathrm{corr}}
     =
-    \frac{1}{2}m_{\mathrm b}\dot{x}^{\,2}m_{\mathrm b}\ell
+    m_{\mathrm b}\ell
     \dot{x}\dot{\theta}\cos\theta
-    \nonumber\\
-    &\quad
+    +
+    \frac{1}{2}
+    m_{\mathrm b}\ell^2
+    \dot{\theta}^{\,2}.
     \label{eq:correction_kinetic_energy}
 \end{equation}
+
 The rotational kinetic energy of the pendulum body is
 \begin{equation}
     T_{\mathrm b,rot}
     =
-    \frac{1}{2}I_{\mathrm b}\dot{\theta}^{\,2},
+    \frac{1}{2}
+    I_{\mathrm b}
+    \dot{\theta}^{\,2},
     \label{eq:body_rotational_energy}
 \end{equation}
 and the rotational kinetic energy of the wheel is
 \begin{equation}
     T_{\mathrm w,rot}
     =
-    \frac{1}{2}I_{\mathrm w}\dot{\phi}_{\mathrm w}^{\,2}.
+    \frac{1}{2}
+    I_{\mathrm w}
+    \dot{\phi}_{\mathrm w}^{\,2}.
     \label{eq:wheel_rotational_energy}
 \end{equation}
 
@@ -179,9 +192,9 @@ Thus, the total kinetic energy is
 \begin{align}
     T
     &=
-    T_{\mathrm trans}
+    T_{\mathrm{trans}}
     +
-    T_{\mathrm corr}
+    T_{\mathrm{corr}}
     +
     T_{\mathrm b,rot}
     +
@@ -204,17 +217,19 @@ Thus, the total kinetic energy is
         m_{\mathrm b}\ell^2
     \right)
     \dot{\theta}^{\,2}
+    \nonumber\\
+    &\quad
     +
     \frac{1}{2}
-    I_{\mathrm w}\dot{\phi}_{\mathrm w}^{\,2}.
+    I_{\mathrm w}
+    \dot{\phi}_{\mathrm w}^{\,2}.
     \label{eq:total_kinetic_energy}
 \end{align}
 
-Applying the rolling constraint from \eqref{eq:rolling_constraint_acceleration}
-gives
-\begin{equation}
+Applying the rolling constraint gives
+\begin{align}
     T
-    =
+    &=
     \frac{1}{2}
     \left(
         m_{\mathrm b}
@@ -224,9 +239,13 @@ gives
         \frac{I_{\mathrm w}}{r_{\mathrm w}^{\,2}}
     \right)
     \dot{x}^{\,2}
+    \nonumber\\
+    &\quad
     +
     m_{\mathrm b}\ell
     \dot{x}\dot{\theta}\cos\theta
+    \nonumber\\
+    &\quad
     +
     \frac{1}{2}
     \left(
@@ -236,7 +255,7 @@ gives
     \right)
     \dot{\theta}^{\,2}.
     \label{eq:constrained_kinetic_energy}
-\end{equation}
+\end{align}
 
 \subsection{Potential Energy}
 
@@ -285,6 +304,8 @@ Using \eqref{eq:constrained_kinetic_energy} and
         \frac{I_{\mathrm w}}{r_{\mathrm w}^{\,2}}
     \right)
     \dot{x}^{\,2}
+    \nonumber\\
+    &\quad
     +
     m_{\mathrm b}\ell
     \dot{x}\dot{\theta}\cos\theta
@@ -342,7 +363,34 @@ rotation of the pendulum from the upright position.
 \subsubsection{Translational Equation}
 
 Applying the Euler--Lagrange equation to $x$ gives
-\begin{equation}
+\begin{align}
+    \frac{\partial \mathcal{L}}
+    {\partial \dot{x}}
+    &=
+    \left(
+        m_{\mathrm b}
+        +
+        m_{\mathrm w}
+        +
+        \frac{I_{\mathrm w}}{r_{\mathrm w}^{\,2}}
+    \right)
+    \dot{x}
+    \nonumber\\
+    &\quad
+    +
+    m_{\mathrm b}\ell
+    \dot{\theta}\cos\theta.
+    \label{eq:partial_L_partial_xdot}
+\end{align}
+
+Taking the time derivative gives
+\begin{align}
+    \frac{\mathrm{d}}{\mathrm{d}t}
+    \left(
+        \frac{\partial \mathcal{L}}
+        {\partial \dot{x}}
+    \right)
+    &=
     \left(
         m_{\mathrm b}
         +
@@ -351,46 +399,136 @@ Applying the Euler--Lagrange equation to $x$ gives
         \frac{I_{\mathrm w}}{r_{\mathrm w}^{\,2}}
     \right)
     \ddot{x}
+    \nonumber\\
+    &\quad
     +
-    m_{\mathrm b}\ell\cos\theta
-    \ddot{\theta}
+    m_{\mathrm b}\ell
+    \left(
+        \ddot{\theta}\cos\theta
+        -
+        \dot{\theta}^{\,2}\sin\theta
+    \right).
+    \label{eq:d_dt_partial_L_partial_xdot}
+\end{align}
+
+Since the Lagrangian does not explicitly depend on $x$,
+\begin{equation}
+    \frac{\partial \mathcal{L}}
+    {\partial x}
+    =
+    0.
+    \label{eq:partial_L_partial_x}
+\end{equation}
+
+Therefore, the translational equation of motion is
+\begin{align}
+    &\left(
+        m_{\mathrm b}
+        +
+        m_{\mathrm w}
+        +
+        \frac{I_{\mathrm w}}{r_{\mathrm w}^{\,2}}
+    \right)
+    \ddot{x}
+    \nonumber\\
+    &\quad
+    +
+    m_{\mathrm b}\ell
+    \cos\theta\,\ddot{\theta}
     -
     m_{\mathrm b}\ell
     \sin\theta\,\dot{\theta}^{\,2}
     =
     -\frac{M_{\mathrm{mot}}}{r_{\mathrm w}}.
     \label{eq:translation_eom}
-\end{equation}
+\end{align}
 
 \subsubsection{Pendulum Angular Equation}
 
 Applying the Euler--Lagrange equation to $\theta$ gives
-\begin{equation}
+\begin{align}
+    \frac{\partial \mathcal{L}}
+    {\partial \dot{\theta}}
+    &=
+    m_{\mathrm b}\ell
+    \dot{x}\cos\theta
+    \nonumber\\
+    &\quad
+    +
     \left(
+        I_{\mathrm b}
+        +
+        m_{\mathrm b}\ell^2
+    \right)
+    \dot{\theta}.
+    \label{eq:partial_L_partial_thetadot}
+\end{align}
+
+Taking the time derivative gives
+\begin{align}
+    \frac{\mathrm{d}}{\mathrm{d}t}
+    \left(
+        \frac{\partial \mathcal{L}}
+        {\partial \dot{\theta}}
+    \right)
+    &=
+    m_{\mathrm b}\ell
+    \left(
+        \ddot{x}\cos\theta
+        -
+        \dot{x}\dot{\theta}\sin\theta
+    \right)
+    \nonumber\\
+    &\quad
+    +
+    \left(
+        I_{\mathrm b}
+        +
+        m_{\mathrm b}\ell^2
+    \right)
+    \ddot{\theta}.
+    \label{eq:d_dt_partial_L_partial_thetadot}
+\end{align}
+
+The partial derivative with respect to $\theta$ is
+\begin{align}
+    \frac{\partial \mathcal{L}}
+    {\partial \theta}
+    &=
+    -m_{\mathrm b}\ell
+    \dot{x}\dot{\theta}\sin\theta
+    +
+    m_{\mathrm b}g\ell\sin\theta.
+    \label{eq:partial_L_partial_theta}
+\end{align}
+
+Therefore, the angular equation of motion is
+\begin{align}
+    &\left(
         I_{\mathrm b}
         +
         m_{\mathrm b}\ell^2
     \right)
     \ddot{\theta}
     +
-    m_{\mathrm b}\ell\cos\theta
-    \ddot{x}
+    m_{\mathrm b}\ell
+    \cos\theta\,\ddot{x}
+    \nonumber\\
+    &\qquad
     -
     m_{\mathrm b}g\ell\sin\theta
     =
     M_{\mathrm{mot}}.
     \label{eq:angular_eom}
-\end{equation}
+\end{align}
 
 The first term represents the rotational inertia of the pendulum
 body, the second represents translational--rotational coupling, and
 the third represents the gravitational torque.
 
-
-
 \subsection{Symbol and Coordinate Definitions}
 
-\begin{table}[t]
+\begin{table}[H]
 \centering
 \caption{Symbols and coordinate definitions.}
 \label{tab:symbol_definitions}
@@ -473,23 +611,8 @@ $Q_i$
 $M_{\mathrm{mot}}$
 & Motor torque applied between the wheel and pendulum body. \\
 
-$F_{\mathrm f}$
-& Horizontal wheel--ground traction force. \\
-
 $C$
 & Constant determined by the initial rolling configuration. \\
-
-$\bm M$
-& Configuration-dependent mass matrix. \\
-
-$\bm h$
-& Velocity-dependent nonlinear term vector. \\
-
-$\bm g$
-& Gravitational generalized-force vector. \\
-
-$\bm B$
-& Motor input vector. \\
 
 $t$
 & Time. \\
