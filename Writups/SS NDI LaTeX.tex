@@ -9,6 +9,47 @@
 
 \begin{document}
 
-\section{State Space Modelling}
+\section{State-Space Modelling}
+
+One of the most effective methods of modelling systems is through the State-Space method. 
+It combines the existing state matrix, $x(t)$, and combines it with the input, $u(t)$, to determine 
+the changes made on the state, $\dot{x}(t)$, and the output of the system, $y(t)$. 
+The equation describing the relation is as follows:
+\begin{align}
+\dot{x}(t) &= \mathbf{A}x(t) + \mathbf{B}u(t)
+y(t) &= \mathbf{C}x(t) + \mathbf{D}u(t)
+\end{align}
+Where $\mathbf{A}$, $\mathbf{B}$, $\mathbf{C}$, and $\mathbf{D}$ are matrices of real numbers, with dimensions informed 
+by those of the state, input, and output matrices.
+
+\subsection{Applications of the State-Space}
+
+\section{Deriving Dynamics Inversion}
+
+Dynamics Inversion is a controls approach relying on physics modelling to predict optimal inputs for a desired effect. 
+We utilize the state space matrix to work backwards and acquire the desired behaviors. As a note, 
+this approach relies on inverting non-square or non-invertible matrices, and as such, we must use approximations. 
+The derivation begins with the standard state-space equation, except replacing $y(t)$ with some arbitrary desired outpu $v$:
+\begin{align}
+\dot{x}(t) &= \mathbf{A}x(t) + \mathbf{B}u(t)
+v &= \mathbf{C}x(t) + \mathbf{D}u(t)
+\end{align}
+Since our system will have a $\mathbf{D}$ matrix with entirely $0$ components, we must find another way to relate input to change in output. 
+This is done by differentiating the output equation:
+\begin{align}
+\dot{v} &= \mathbf{C}\dot{x}(t)
+\dot{v} &= \mathbf{C}(\mathbf{A}x(t) + \mathbf{B}u(t))
+\end{align}
+We don't have a desired change in output, so we introduce an arbitrary time constant $\tau$ for a discrete derivative:
+\begin{align}
+\dot{v} &= \frac{v-y(t), \tau}
+\frac{v-y(t), \tau} &= \mathbf{C}(\mathbf{A}x(t) + \mathbf{B}u(t))
+\end{align}
+Now that the equation is fully derived, we can extract a formula for $u(t)$ in terms of the other variables:
+\begin{align}
+
+\end{align}
 
 
+
+\end{document}
