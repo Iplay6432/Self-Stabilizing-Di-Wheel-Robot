@@ -24,6 +24,11 @@ by those of the state, input, and output matrices.
 
 \subsection{Applications of the State-Space}
 
+State-Space matrices are useful for condensing equations of motion into a simpler matrix relating input to output coordinates. 
+They offer some of the best time domain representations of systems, 
+providing combined information density with physical intuition that is better than that of a transfer function representation. 
+Besided this, state-space matrices are required for the dynamics inversion approach planned to be utilized the body angle controller.
+
 \section{Deriving Dynamics Inversion}
 
 Dynamics Inversion is a controls approach that relies on physics modeling to predict optimal inputs for a desired effect. 
@@ -34,7 +39,7 @@ The derivation begins with the standard state-space equation, except replacing $
 \dot{x}(t) &= \mathbf{A}x(t) + \mathbf{B}u(t) \\
 v &= \mathbf{C}x(t) + \mathbf{D}u(t)
 \end{align}
-Since our system will have a matrix $\mathbf{D}$ with completely $0$ components, we must find another way to relate the input to the change in output. 
+Since our system will have a matrix $\mathbf{D}$ with completely $0$ components (meaning there is lag between input and change), we must find another way to relate the input to the change in output. 
 This is done by differentiating the output equation:
 \begin{align}
 \dot{v} &= \mathbf{C}\dot{x}(t) \\
@@ -49,8 +54,8 @@ Now that the equation is fully derived, we can extract a formula for $u(t)$ in t
 \begin{align}
 \mathbf{C}^{-1}\frac{v-y(t)}{ \tau} &= \mathbf{A}x(t) + \mathbf{B}u(t) \\
 \mathbf{C}^{-1}\frac{v-y(t)}{ \tau} - \mathbf{A}x(t) &= \mathbf{B}u(t) \\
-\mathbf{B}^{-1}(\mathbf{C}^{-1}\frac{v-y(t)}{ \tau} - \mathbf{A}x(t)) &= u(t) \\
-u(t) &= \frac{\mathbf{B}^{-1}\mathbf{C}^{-1}(v-y(t))-\mathbf{A}\mathbf{B}^{-1}x(t)}{ \tau}
+\mathbf{B}^{-1}\mathbf{C}^{-1}\frac{v-y(t)}{ \tau} - \mathbf{A}x(t)) &= u(t) \\
+u(t) &= \frac{\mathbf{B}^{-1}\mathbf{C}^{-1}(v-y(t))-\mathbf{A}\mathbf{B}^{-1}\tau x(t)}{ \tau}
 \end{align}
 
 \subsection{Addressing Matrix Pseudo-Inversions}
@@ -74,5 +79,12 @@ is a diagonal matrix representing scaling;
 \mathbf{A}^{\dagger} = \mathbf{V}\Sigma^{\dagger}\mathbf{U}^{T}
 \end{align}
 Where $\Sigma^{\dagger}$ is made up of the reciprocals of the elements of $\Sigma$
+
+Given this, we may update our dynamics inversion equation:
+\begin{align}
+u(t) &= \frac{\mathbf{B}^{\dagger}\mathbf{C}^{\dagger}(v-y(t))-\mathbf{A}\mathbf{B}^{\dagger}\tau x(t)}{\tau}
+\end{align}
+
+
 
 \end{document}
