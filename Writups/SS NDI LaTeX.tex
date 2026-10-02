@@ -16,7 +16,7 @@ It combines the existing state matrix, $x(t)$, and combines it with the input, $
 the changes made on the state, $\dot{x}(t)$, and the output of the system, $y(t)$. 
 The equation describing the relation is as follows:
 \begin{align}
-\dot{x}(t) &= \mathbf{A}x(t) + \mathbf{B}u(t)
+\dot{x}(t) &= \mathbf{A}x(t) + \mathbf{B}u(t) \\
 y(t) &= \mathbf{C}x(t) + \mathbf{D}u(t)
 \end{align}
 Where $\mathbf{A}$, $\mathbf{B}$, $\mathbf{C}$, and $\mathbf{D}$ are matrices of real numbers, with dimensions informed 
@@ -26,15 +26,15 @@ by those of the state, input, and output matrices.
 
 \section{Deriving Dynamics Inversion}
 
-Dynamics Inversion is a controls approach relying on physics modelling to predict optimal inputs for a desired effect. 
+Dynamics Inversion is a controls approach that relies on physics modeling to predict optimal inputs for a desired effect. 
 We utilize the state space matrix to work backwards and acquire the desired behaviors. As a note, 
 this approach relies on inverting non-square or non-invertible matrices, and as such, we must use approximations. 
-The derivation begins with the standard state-space equation, except replacing $y(t)$ with some arbitrary desired outpu $v$:
+The derivation begins with the standard state-space equation, except replacing $y(t)$ with some arbitrary desired output $v$:
 \begin{align}
 \dot{x}(t) &= \mathbf{A}x(t) + \mathbf{B}u(t) \\
 v &= \mathbf{C}x(t) + \mathbf{D}u(t)
 \end{align}
-Since our system will have a $\mathbf{D}$ matrix with entirely $0$ components, we must find another way to relate input to change in output. 
+Since our system will have a matrix $\mathbf{D}$ with completely $0$ components, we must find another way to relate the input to the change in output. 
 This is done by differentiating the output equation:
 \begin{align}
 \dot{v} &= \mathbf{C}\dot{x}(t) \\
@@ -42,32 +42,37 @@ This is done by differentiating the output equation:
 \end{align}
 We don't have a desired change in output, so we introduce an arbitrary time constant $\tau$ for a discrete derivative:
 \begin{align}
-\dot{v} &= \frac{v-y(t), \tau} \\
-\frac{v-y(t), \tau} &= \mathbf{C}(\mathbf{A}x(t) + \mathbf{B}u(t))
+\dot{v} &= \frac{v-y(t)}{\tau} \\
+\frac{v-y(t)}{ \tau} &= \mathbf{C}(\mathbf{A}x(t) + \mathbf{B}u(t))
 \end{align}
 Now that the equation is fully derived, we can extract a formula for $u(t)$ in terms of the other variables:
 \begin{align}
-\mathbf{C}^{-1}\frac{v-y(t), \tau} &= \mathbf{A}x(t) + \mathbf{B}u(t) \\
-\mathbf{C}^{-1}\frac{v-y(t), \tau} - \mathbf{A}x(t) &= \mathbf{B}u(t) \\
-\mathbf{B}^{-1}(\mathbf{C}^{-1}\frac{v-y(t), \tau} - \mathbf{A}x(t)) &= u(t) \\
-u(t) &= \frac{\mathbf{B}^{-1}\mathbf{C}^{-1}(v-y(t)-\mathbf{A}\mathbf{B}^{-1}x(t), \tau}
+\mathbf{C}^{-1}\frac{v-y(t)}{ \tau} &= \mathbf{A}x(t) + \mathbf{B}u(t) \\
+\mathbf{C}^{-1}\frac{v-y(t)}{ \tau} - \mathbf{A}x(t) &= \mathbf{B}u(t) \\
+\mathbf{B}^{-1}(\mathbf{C}^{-1}\frac{v-y(t)}{ \tau} - \mathbf{A}x(t)) &= u(t) \\
+u(t) &= \frac{\mathbf{B}^{-1}\mathbf{C}^{-1}(v-y(t))-\mathbf{A}\mathbf{B}^{-1}x(t)}{ \tau}
 \end{align}
 
 \subsection{Addressing Matrix Pseudo-Inversions}
 
 For dynamics inversion, we have been required to invert matrices that are not intended to be inverted. 
-As a result, we require a method of matrix pseudoinversion. This will be done through the Moore-Penrose Pseudoinverse. 
-The Moore-Penrose Pseudoinverse of matrix $\mathbf{A}$, $\mathbf{A}^{\dag}$, obeys the following rules:
+As a result, we require a method of matrix pseudo-inversion. This will be done through the Moore-Penrose pseudo-inverse. 
+The Moore-Penrose pseudo-inverse of the matrix $\mathbf{A}$, $\mathbf{A}^{\dagger}$, obeys the following rules:
 \begin{align}
-\mathbf{A}\mathbf{A}^{\dag}\mathbf{A} &= \mathbf{A} \\
-\mathbf{A}^{\dag}\mathbf{A}\mathbf{A}^{\dag} &= \mathbf{A}^{\dag} \\
-(\mathbf{A}\mathbf{A}^{\dag})^{T} &= \mathbf{A}\mathbf{A}^{\dag} \\
-(\mathbf{A}^{\dag}\mathbf{A})^{T} &= \mathbf{A}^{\dag}\mathbf{A}
+\mathbf{A}\mathbf{A}^{\dagger}\mathbf{A} &= \mathbf{A} \\
+\mathbf{A}^{\dagger}\mathbf{A}\mathbf{A}^{\dagger} &= \mathbf{A}^{\dagger} \\
+(\mathbf{A}\mathbf{A}^{\dagger})^{T} &= \mathbf{A}\mathbf{A}^{\dagger} \\
+(\mathbf{A}^{\dagger}\mathbf{A})^{T} &= \mathbf{A}^{\dagger}\mathbf{A}
 \end{align}
-We can calculate this matrix using singular value decomposition of the matrix $\mathbf{A}$.
+We can calculate this matrix using the singular value decomposition of the matrix $\mathbf{A}$.
 \begin{align}
-\mathbf{A}=\mathbf{U}\Sigma\mathbf{V}^{T}
+\mathbf{A} = \mathbf{U}\Sigma\mathbf{V}^{T}
 \end{align}
-
+Where $\mathbf{U}$ and $\mathbf{V}$ are orthogonal and unitary matrices representing rotation, and $\Sigma$ 
+is a diagonal matrix representing scaling;
+\begin{align}
+\mathbf{A}^{\dagger} = \mathbf{V}\Sigma^{\dagger}\mathbf{U}^{T}
+\end{align}
+Where $\Sigma^{\dagger}$ is made up of the reciprocals of the elements of $\Sigma$
 
 \end{document}
