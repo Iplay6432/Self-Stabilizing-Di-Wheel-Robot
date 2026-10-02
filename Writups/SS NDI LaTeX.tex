@@ -31,23 +31,26 @@ We utilize the state space matrix to work backwards and acquire the desired beha
 this approach relies on inverting non-square or non-invertible matrices, and as such, we must use approximations. 
 The derivation begins with the standard state-space equation, except replacing $y(t)$ with some arbitrary desired outpu $v$:
 \begin{align}
-\dot{x}(t) &= \mathbf{A}x(t) + \mathbf{B}u(t)
+\dot{x}(t) &= \mathbf{A}x(t) + \mathbf{B}u(t) \\
 v &= \mathbf{C}x(t) + \mathbf{D}u(t)
 \end{align}
 Since our system will have a $\mathbf{D}$ matrix with entirely $0$ components, we must find another way to relate input to change in output. 
 This is done by differentiating the output equation:
 \begin{align}
-\dot{v} &= \mathbf{C}\dot{x}(t)
+\dot{v} &= \mathbf{C}\dot{x}(t) \\
 \dot{v} &= \mathbf{C}(\mathbf{A}x(t) + \mathbf{B}u(t))
 \end{align}
 We don't have a desired change in output, so we introduce an arbitrary time constant $\tau$ for a discrete derivative:
 \begin{align}
-\dot{v} &= \frac{v-y(t), \tau}
+\dot{v} &= \frac{v-y(t), \tau} \\
 \frac{v-y(t), \tau} &= \mathbf{C}(\mathbf{A}x(t) + \mathbf{B}u(t))
 \end{align}
 Now that the equation is fully derived, we can extract a formula for $u(t)$ in terms of the other variables:
 \begin{align}
-
+\mathbf{C}^{-1}\frac{v-y(t), \tau} &= \mathbf{A}x(t) + \mathbf{B}u(t) \\
+\mathbf{C}^{-1}\frac{v-y(t), \tau} - \mathbf{A}x(t) &= \mathbf{B}u(t) \\
+\mathbf{B}^{-1}(\mathbf{C}^{-1}\frac{v-y(t), \tau} - \mathbf{A}x(t)) &= u(t) \\
+u(t) &= \frac{\mathbf{B}^{-1}\mathbf{C}^{-1}(v-y(t)-\mathbf{A}\mathbf{B}^{-1}x(t), \tau}
 \end{align}
 
 
