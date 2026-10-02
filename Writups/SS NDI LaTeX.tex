@@ -57,12 +57,16 @@ u(t) &= \frac{\mathbf{B}^{-1}\mathbf{C}^{-1}(v-y(t)-\mathbf{A}\mathbf{B}^{-1}x(t
 
 For dynamics inversion, we have been required to invert matrices that are not intended to be inverted. 
 As a result, we require a method of matrix pseudoinversion. This will be done through the Moore-Penrose Pseudoinverse. 
-The Moore-Penrose Pseudoinverse of matrix $\mathbf{A}$ obeys the following rules:
+The Moore-Penrose Pseudoinverse of matrix $\mathbf{A}$, $\mathbf{A}^{\dag}$, obeys the following rules:
 \begin{align}
-\mathbf{A}\mathbf{A}^{\dag}\mathbf{A}=\mathbf{A}
-\mathbf{A}^{\dag}\mathbf{A}\mathbf{A}^{\dag}=\mathbf{A}^{\dag}
-(\mathbf{A}\mathbf{A}^{\dag})^{T}=\mathbf{A}\mathbf{A}^{\dag}
-
+\mathbf{A}\mathbf{A}^{\dag}\mathbf{A} &= \mathbf{A} \\
+\mathbf{A}^{\dag}\mathbf{A}\mathbf{A}^{\dag} &= \mathbf{A}^{\dag} \\
+(\mathbf{A}\mathbf{A}^{\dag})^{T} &= \mathbf{A}\mathbf{A}^{\dag} \\
+(\mathbf{A}^{\dag}\mathbf{A})^{T} &= \mathbf{A}^{\dag}\mathbf{A}
+\end{align}
+We can calculate this matrix using singular value decomposition of the matrix $\mathbf{A}$.
+\begin{align}
+\mathbf{A}=\mathbf{U}\Sigma\mathbf{V}^{T}
 \end{align}
 
 
