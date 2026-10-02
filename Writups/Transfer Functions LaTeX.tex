@@ -5,6 +5,7 @@
 \usepackage{bm}
 \usepackage{booktabs}
 \usepackage{array}
+\usepackage{float}
 
 \begin{document}
 
@@ -17,13 +18,14 @@ This is where the concept of the Laplace Transform and Transfer Functions emerge
 
 \subsection{Laplace Transform Basics}
 
-The Laplace Transform is a tool that can analyze frequencies in a given function $f\(t\)$, where a frequency $s \in \mathbb{C}$ 
-is a component of the function when the transform doesn't converge. 
+The Laplace Transform is a tool that can analyze frequencies in a given function $f(t)$, 
+where a frequency $s \in \mathbb{C}$ 
+is represented in the function when the transform doesn't converge. 
 The function is represented by the improper integral below:
 \begin{equation}
 \mathcal{L}\{f(t)\} = \int_{0}^{\infty} e^{-st}f(t)\,dt
 \end{equation}
-The $e^(-st)$ component mechanically causes the integral to diverge, since when the frequency $s$ is represented in the function, 
+The $e^{-st}$ component mechanically causes the integral to diverge, since when the frequency $s$ is represented in the function, 
 the integrand becomes purely positive or purely negative.
 
 \subsection{Applications of the Laplace Transform}
@@ -33,7 +35,7 @@ If we know the value of $\omega$, which is an angular frequency, we can derive v
 and if we know the value of $\sigma$, we can determine how the function oscillates around its value of convergence. 
 On top of this, the Laplace Transform has applications in differential equations relating to how it evaluates for derivatives and integrals. 
 
-\begin{table}[t]
+\begin{table}[H]
 \centering
 \caption{Laplace Transform of Derivatives and Integrals}
 \label{tab:symbol_definitions}
@@ -45,10 +47,60 @@ On top of this, the Laplace Transform has applications in differential equations
 \toprule
 Function & Laplace Transform \\
 \midrule
-
-
+$f(t)$ & $\mathcal{L}\{f(t)\}$ \\
+$f'(t)$ & $s\mathcal{L}\{f(t)\} - f(0)$ \\
+$f''(t)$ & $s^2\mathcal{L}\{f(t)\} - sf(0) - f'(0)$ \\
+$f^{(n)}(t)$ & $s^n\mathcal{L}\{f(t)\} - s^{n-1}f(0) - s^{n-2}f'(0) - \cdots - f^{(n-1)}(0)$ \\
+$\int_0^t f(\tau)\,d\tau$ & $\frac{1}{s}\mathcal{L}\{f(t)\}$ \\
+\bottomrule
 \end{tabular}
 \end{table}
+Viewing the table, we see a pattern in how the Laplace Transform 
+behaves for derivatives and integrals. As put in the table: any n-th derivative introduces 
+a factor of $s^n$, while the integral introduces a factor of $\frac{1}{s}$. 
+This provides a powerful tool for analyzing and solving differential equations. 
+Since differential equations can be quite complex, but algebra is 
+relatively straightforward, the Laplace Transform provides a bridge between the two domains. 
+
+This capability of the Laplace Transform is compounded by how function compositions 
+are handled in the frequency domain. 
+In frequency domain the following rules hold true:
+\begin{equation}
+\mathcal{L}\{f(g(t))\} = \mathcal{L}\{f(t)\} \cdot \mathcal{L}\{g(t)\}
+\end{equation}
+\begin{equation}
+\mathcal{L}\{f(t+g(t))\} = \mathcal{L}\{f(t)\} + \mathcal{L}\{g(t)\}
+\end{equation}
+These two rules set up signal analysis for the production of a transfer function.
+
+\subsection{Transfer Functions}
+
+The transfer function represents the relationship between frequency-domain inputs and 
+outputs of a system. The transfer function of a system is defined as the ratio of the 
+Laplace Transform of the output, $y(t)$ to the Laplace Transform of the input, $x(t)$, 
+assuming all initial conditions are zero.
+\begin{equation}
+\mathcal{T}(s) = \frac{\mathcal{L}\{y(t)\}}{\mathcal{L}\{x(t)\}}
+\end{equation}
+The bulk of systems worked with in this project are closed-loop systems, meaning the output is 
+fed back to the input. Transfer functions provide another perk in analyzing such systems. 
+For a system with a closed loop configuration, a plant function $G(s)$, 
+and some function of feedbakc $H(s)$, by solving algebraically using signal rules, 
+the transfer function can be expressed as:
+\begin{equation}
+\mathcal{T}(s) = \frac{G(s)}{1 + G(s)H(s)}
+\end{equation}
+
+Most transfer functions are expressed as rational functions in the frequency domain, 
+containing a numerator and denominator that are both polynomials of $s$. 
+This simplifies analysis and design of control systems, since it is relatively straightforward 
+to calculate zeros of the numerator and poles of the denominator, revealing points of interest 
+in the system's behavior. 
+
+For tuning a PID controller, our primary focus is on the poles of the transfer function, 
+where they specify the characteristics of the system's response
+(exponential behavior, oscillation, etc.). In the next section, we will apply 
+the underlying principles to provide the desired behavior for our project.
 
 
 \end{document}
