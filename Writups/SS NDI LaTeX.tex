@@ -29,6 +29,175 @@ They offer some of the best time domain representations of systems,
 providing combined information density with physical intuition that is better than that of a transfer function representation. 
 Besided this, state-space matrices are required for the dynamics inversion approach planned to be utilized the body angle controller.
 
+\subsection{Producing the State-Space Model}
+
+Recall the equations of motion for the system produced earlier:
+\begin{align}
+    &\left(
+        m_{\mathrm b}
+        +
+        m_{\mathrm w}
+        +
+        \frac{I_{\mathrm w}}{r_{\mathrm w}^{\,2}}
+    \right)
+    \ddot{x}
+    \nonumber\\
+    &\quad
+    +
+    m_{\mathrm b}\ell
+    \cos\theta\,\ddot{\theta}
+    -
+    m_{\mathrm b}\ell
+    \sin\theta\,\dot{\theta}^{\,2}
+    =
+    -\frac{M_{\mathrm{mot}}}{r_{\mathrm w}}.
+    \label{eq:translation_eom}
+\end{align}
+And
+\begin{align}
+    &\left(
+        I_{\mathrm b}
+        +
+        m_{\mathrm b}\ell^2
+    \right)
+    \ddot{\theta}
+    +
+    m_{\mathrm b}\ell
+    \cos\theta\,\ddot{x}
+    \nonumber\\
+    &\qquad
+    -
+    m_{\mathrm b}g\ell\sin\theta
+    =
+    M_{\mathrm{mot}}.
+    \label{eq:angular_eom}
+\end{align}
+Remember that the state-space model seeks to represent how the system's state 
+adjusts relative to the inputs existing state, and how the system's output responds to changes 
+in the state. In linear form, we specifically care about behavior very near to a specific point. 
+In the case of our system, we care about the output $\theta$ near the state 
+$[x, \dot{x}, \theta, \dot{\theta}] = [0, 0, 0, 0]$. 
+Knowing this gives us enough information to  produce our linearized state-space model.
+
+Firstly, we must linearize the equations of motion around the operating point 
+$[x, \dot{x}, \theta, \dot{\theta}] = [0, 0, 0, 0]$. At this point, we note our approximations:
+\begin{align}
+cos\theta &\approx 1 \\
+sin\theta &\approx 0 \\
+\dot{theta}^2 &\approx 0
+\end{align}
+Applying these approximations to the equations of motion yields the linearized equations:
+\begin{align}
+    &\left(
+        m_{\mathrm b}
+        +
+        m_{\mathrm w}
+        +
+        \frac{I_{\mathrm w}}{r_{\mathrm w}^{\,2}}
+    \right)
+    \ddot{x}
+    \nonumber\\
+    &\quad
+    +
+    m_{\mathrm b}\ell,\ddot{\theta}
+    =
+    -\frac{M_{\mathrm{mot}}}{r_{\mathrm w}}.
+    \label{eq:translation_eom_linearized}
+\end{align}
+And
+\begin{align}
+    &\left(
+        I_{\mathrm b}
+        +
+        m_{\mathrm b}\ell^2
+    \right)
+    \ddot{\theta}
+    +
+    m_{\mathrm b}\ell,\ddot{x}
+    \nonumber\\
+    &\qquad
+    -
+    m_{\mathrm b}g\ell\theta
+    =
+    M_{\mathrm{mot}}.
+    \label{eq:angular_eom_linearized}
+\end{align}
+Multiplying \eqref{translation_eom_linearized} by $r_{\mathrm w}$ and adding the two equations together yields:
+\begin{align}
+    &\left(
+        r_{\mathrm w}
+        \left(
+            m_{\mathrm b}
+            +
+            m_{\mathrm w}
+            +
+            \frac{I_{\mathrm w}}{r_{\mathrm w}^{\,2}}
+        \right)
+        +
+        m_{\mathrm b}\ell
+    \right)
+    \ddot{x}
+    \nonumber\\
+    &\quad
+    +
+    \left(
+        r_{\mathrm w}m_{\mathrm b}\ell
+        +
+        m_{\mathrm b}\ell^{2}
+        +
+        I_{\mathrm b}
+    \right)
+    =
+    m_{\mathrm b}g\ell\theta
+    \label{eq:combined_eom_linearized}
+\end{align}
+
+
+We begin deriving the state-space model by setting up the state vector and input vector for the linearized system. 
+In our case, the state vector is
+\begin{align}
+    \mathbf{x} = \begin{bmatrix} x \\ \dot{x} \\ \theta \\ \dot{\theta} \end{bmatrix}
+\end{align}
+and the input vector is
+\begin{align}
+    \mathbf{u} = \begin{bmatrix} M_{\mathrm{mot}} \end{bmatrix}.
+\end{align}
+By this, we get:
+\begin{align}
+    \dot{\mathbf{x}} = \begin{bmatrix} \dot{x} \\ \ddot{x} \\ \dot{\theta} \\ \ddot{\theta} \end{bmatrix}
+\end{align}
+Setting up the state-space and consulting the equations allows for us to derive the values 
+for the $\mathbf{A}$ and $\mathbf{B}$. We consider it to be a trivial exercise for 
+the interested reader to consider why $\mathbf{C}=\begin{bmatrix}
+    0 & 0 & 1 & 0
+\end{bmatrix}
+$ and $\mathbf{D}=\begin{bmatrix} 0 \end{bmatrix}$.
+The matrix representation of the equations of motion is useful to evaluate relationships:
+
+
+The matrices are with constants $k_{n}$ and provide expressions for their numeric values:
+\begin{align}
+\mathbf{A} &= \begin{bmatrix}
+    0 & 1 & 0 & 0 \\
+    0 & 0 & k_{1} & 0 \\
+    0 & 0 & 0 & 1 \\
+    0 &  & k_{2} & 0
+\end{bmatrix}, \quad
+\mathbf{B} = \begin{bmatrix}
+    0 \\
+    k_{3} \\
+    0 \\
+    k_{4}
+\end{bmatrix}
+\end{align}
+Where:
+\begin{align}
+    k_{1} &= \\
+    k_{2} &= \\
+    k_{3} &= \\
+    k_{4} &= 
+\end{align}
+
 \section{Deriving Dynamics Inversion}
 
 Dynamics Inversion is a controls approach that relies on physics modeling to predict optimal inputs for a desired effect. 
