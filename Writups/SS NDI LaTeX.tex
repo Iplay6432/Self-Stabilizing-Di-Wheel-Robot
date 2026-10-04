@@ -148,10 +148,10 @@ The matrix representation of the equations of motion is useful to evaluate relat
         (m_{\mathrm{b}}+m_{\mathrm{w}}+\frac{I_{\mathrm{w}}}{r_{\mathrm{w}}^2}) & m_{\mathrm{b}}\ell \\
         m_{\mathrm{b}}\ell & (I_{\mathrm{b}}+m_{\mathrm{b}}\ell^2)
     \end{bmatrix}
-    \begin{bmatrix}
+    &\begin{bmatrix}
         \ddot{x} \\ \ddot{\theta}
     \end{bmatrix}
-    =
+    = \\ &
     \begin{bmatrix}
         -\frac{1}{r_{\mathrm{w}}} \\ 1
     \end{bmatrix}
@@ -188,12 +188,14 @@ Solving for $\ddot{x}$ and $\ddot{\theta}$ yields:
     \begin{bmatrix}
         \ddot{x} \\ \ddot{\theta}
     \end{bmatrix}
-    &=
-\frac{1}{\det{\mathbf{M}}}
+    =
+& \frac{1}{\det{\mathbf{M}}}
 \begin{bmatrix}
     (I_{\mathrm{b}}+m_{\mathrm{b}}\ell^2) & -m_{\mathrm{b}}\ell \\
     -m_{\mathrm{b}}\ell & (m_{\mathrm{b}}+m_{\mathrm{w}}+\frac{I_{\mathrm{w}}}{r_{\mathrm{w}}^2})
 \end{bmatrix}
+\\ &
+\cdot
 \left(
     \begin{bmatrix}
         -\frac{1}{r_{\mathrm{w}}} \\ 1
@@ -212,9 +214,8 @@ Solving for $\ddot{x}$ and $\ddot{\theta}$ yields:
 \begin{bmatrix}
         \ddot{x} \\ \ddot{\theta}
     \end{bmatrix}
-    &=
-    \frac{1}{\det{\mathbf{M}}}
-    \left(
+    =
+    &\frac{1}{\det{\mathbf{M}}}
     \begin{bmatrix}
         -\frac{(I_{\mathrm{b}}+m_{\mathrm{b}}\ell^2)}{r_{\mathrm{w}}} - m_{\mathrm{b}}\ell \\
         \frac{m_{\mathrm{b}}\ell}{r_{\mathrm{w}}} + (m_{\mathrm{b}}+m_{\mathrm{w}}+\frac{I_{\mathrm{w}}}{r_{\mathrm{w}}^2})
@@ -222,7 +223,8 @@ Solving for $\ddot{x}$ and $\ddot{\theta}$ yields:
     \begin{bmatrix}
         M_{\mathrm{mot}}
     \end{bmatrix}
-    +
+    + \\ &
+    \frac{1}{\det{\mathbf{M}}}
     \begin{bmatrix}
         -m_{\mathrm{b}}^{2}\ell^{2}g \\
         (m_{\mathrm{b}}+m_{\mathrm{w}}+\frac{I_{\mathrm{w}}}{r_{\mathrm{w}}^2})m_{\mathrm{b}}g\ell
@@ -230,7 +232,6 @@ Solving for $\ddot{x}$ and $\ddot{\theta}$ yields:
     \begin{bmatrix}
         \theta
     \end{bmatrix}
-    \right)
 \end{align}
 where $\det(\mathbf{M})$ is given by:
 \begin{align}
