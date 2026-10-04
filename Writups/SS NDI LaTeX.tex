@@ -12,7 +12,7 @@
 \section{State-Space Modelling}
 
 One of the most effective methods of modelling systems is through the State-Space method. 
-It combines the existing state matrix, $x(t)$, and combines it with the input, $u(t)$, to determine 
+It combines the existing state vector, $x(t)$, and combines it with the input, $u(t)$, to determine 
 the changes made on the state, $\dot{x}(t)$, and the output of the system, $y(t)$. 
 The equation describing the relation is as follows:
 \begin{align}
@@ -27,9 +27,9 @@ by those of the state, input, and output matrices.
 State-Space matrices are useful for condensing equations of motion into a simpler matrix relating input to output coordinates. 
 They offer some of the best time domain representations of systems, 
 providing combined information density with physical intuition that is better than that of a transfer function representation. 
-Besided this, state-space matrices are required for the dynamics inversion approach planned to be utilized the body angle controller.
+Besides this, state-space matrices are required for the dynamics inversion approach planned to be utilized the body angle controller.
 
-\subsection{Producing the State-Space Model}
+\section{Producing the State-Space Model}
 
 Recall the equations of motion for the system produced earlier:
 \begin{align}
@@ -83,7 +83,7 @@ Firstly, we must linearize the equations of motion around the operating point
 $[x, \dot{x}, \theta, \dot{\theta}] = [0, 0, 0, 0]$. At this point, we note our approximations:
 \begin{align}
 cos\theta &\approx 1 \\
-sin\theta &\approx 0 \\
+sin\theta &\approx \theta \\
 \dot{theta}^2 &\approx 0
 \end{align}
 Applying these approximations to the equations of motion yields the linearized equations:
@@ -122,36 +122,6 @@ And
     M_{\mathrm{mot}}.
     \label{eq:angular_eom_linearized}
 \end{align}
-Multiplying \eqref{translation_eom_linearized} by $r_{\mathrm w}$ and adding the two equations together yields:
-\begin{align}
-    &\left(
-        r_{\mathrm w}
-        \left(
-            m_{\mathrm b}
-            +
-            m_{\mathrm w}
-            +
-            \frac{I_{\mathrm w}}{r_{\mathrm w}^{\,2}}
-        \right)
-        +
-        m_{\mathrm b}\ell
-    \right)
-    \ddot{x}
-    \nonumber\\
-    &\quad
-    +
-    \left(
-        r_{\mathrm w}m_{\mathrm b}\ell
-        +
-        m_{\mathrm b}\ell^{2}
-        +
-        I_{\mathrm b}
-    \right)
-    =
-    m_{\mathrm b}g\ell\theta
-    \label{eq:combined_eom_linearized}
-\end{align}
-
 
 We begin deriving the state-space model by setting up the state vector and input vector for the linearized system. 
 In our case, the state vector is
@@ -173,15 +143,108 @@ the interested reader to consider why $\mathbf{C}=\begin{bmatrix}
 \end{bmatrix}
 $ and $\mathbf{D}=\begin{bmatrix} 0 \end{bmatrix}$.
 The matrix representation of the equations of motion is useful to evaluate relationships:
-
-
+\begin{align}
+    \begin{bmatrix}
+        (m_{\mathrm{b}}+m_{\mathrm{w}}+\frac{I_{\mathrm{w}}}{r_{\mathrm{w}}^2}) & m_{\mathrm{b}}\ell \\
+        m_{\mathrm{b}}\ell & (I_{\mathrm{b}}+m_{\mathrm{b}}\ell^2)
+    \end{bmatrix}
+    \begin{bmatrix}
+        \ddot{x} \\ \ddot{\theta}
+    \end{bmatrix}
+    =
+    \begin{bmatrix}
+        -\frac{1}{r_{\mathrm{w}}} \\ 1
+    \end{bmatrix}
+    \begin{bmatrix}
+        M_{\mathrm{mot}}
+    \end{bmatrix}
+    +
+    \begin{bmatrix}
+        0 \\ m_{\mathrm{b}}g\ell
+    \end{bmatrix}
+    \begin{bmatrix}
+        \theta 
+    \end{bmatrix}
+\end{align}
+For ease of notation we will define a matrix $\mathbf{M}$ as follows:
+\begin{align}
+    \mathbf{M} = \begin{bmatrix}
+        (m_{\mathrm{b}}+m_{\mathrm{w}}+\frac{I_{\mathrm{w}}}{r_{\mathrm{w}}^2}) & m_{\mathrm{b}}\ell \\
+        m_{\mathrm{b}}\ell & (I_{\mathrm{b}}+m_{\mathrm{b}}\ell^2)
+    \end{bmatrix}
+\end{align}
+We can then say that
+\begin{align}
+\mathbf{M}^{-1}
+=
+\frac{1}{\det(\mathbf{M})}
+\begin{bmatrix}
+    (I_{\mathrm{b}}+m_{\mathrm{b}}\ell^2) & -m_{\mathrm{b}}\ell \\
+    -m_{\mathrm{b}}\ell & (m_{\mathrm{b}}+m_{\mathrm{w}}+\frac{I_{\mathrm{w}}}{r_{\mathrm{w}}^2})
+\end{bmatrix}
+\end{align}
+Solving for $\ddot{x}$ and $\ddot{\theta}$ yields:
+\begin{align}
+    \begin{bmatrix}
+        \ddot{x} \\ \ddot{\theta}
+    \end{bmatrix}
+    &=
+\frac{1}{\det{\mathbf{M}}}
+\begin{bmatrix}
+    (I_{\mathrm{b}}+m_{\mathrm{b}}\ell^2) & -m_{\mathrm{b}}\ell \\
+    -m_{\mathrm{b}}\ell & (m_{\mathrm{b}}+m_{\mathrm{w}}+\frac{I_{\mathrm{w}}}{r_{\mathrm{w}}^2})
+\end{bmatrix}
+\left(
+    \begin{bmatrix}
+        -\frac{1}{r_{\mathrm{w}}} \\ 1
+    \end{bmatrix}
+    \begin{bmatrix}
+        M_{\mathrm{mot}}
+    \end{bmatrix}
+    +
+    \begin{bmatrix}
+        0 \\ m_{\mathrm{b}}g\ell
+    \end{bmatrix}
+    \begin{bmatrix}
+        \theta 
+    \end{bmatrix}
+\right) \\
+\begin{bmatrix}
+        \ddot{x} \\ \ddot{\theta}
+    \end{bmatrix}
+    &=
+    \frac{1}{\det{\mathbf{M}}}
+    \left(
+    \begin{bmatrix}
+        -\frac{(I_{\mathrm{b}}+m_{\mathrm{b}}\ell^2)}{r_{\mathrm{w}}} - m_{\mathrm{b}}\ell \\
+        \frac{m_{\mathrm{b}}\ell}{r_{\mathrm{w}}} + (m_{\mathrm{b}}+m_{\mathrm{w}}+\frac{I_{\mathrm{w}}}{r_{\mathrm{w}}^2})
+    \end{bmatrix}
+    \begin{bmatrix}
+        M_{\mathrm{mot}}
+    \end{bmatrix}
+    +
+    \begin{bmatrix}
+        -m_{\mathrm{b}}^{2}\ell^{2}g \\
+        (m_{\mathrm{b}}+m_{\mathrm{w}}+\frac{I_{\mathrm{w}}}{r_{\mathrm{w}}^2})m_{\mathrm{b}}g\ell
+    \end{bmatrix}
+    \begin{bmatrix}
+        \theta
+    \end{bmatrix}
+    \right)
+\end{align}
+where $\det(\mathbf{M})$ is given by:
+\begin{align}
+    \det(\mathbf{M}) &= (m_{\mathrm{b}}+m_{\mathrm{w}}+\frac{I_{\mathrm{w}}}{r_{\mathrm{w}}^2})(I_{\mathrm{b}}+m_{\mathrm{b}}\ell^2) - (m_{\mathrm{b}}\ell)^2
+\end{align}
+Now that we have these relations given by the matrix differential equation, 
+by using the relations, we can derive the components of each matrix. 
 The matrices are with constants $k_{n}$ and provide expressions for their numeric values:
 \begin{align}
 \mathbf{A} &= \begin{bmatrix}
     0 & 1 & 0 & 0 \\
     0 & 0 & k_{1} & 0 \\
     0 & 0 & 0 & 1 \\
-    0 &  & k_{2} & 0
+    0 & 0 & k_{2} & 0
 \end{bmatrix}, \quad
 \mathbf{B} = \begin{bmatrix}
     0 \\
@@ -192,10 +255,10 @@ The matrices are with constants $k_{n}$ and provide expressions for their numeri
 \end{align}
 Where:
 \begin{align}
-    k_{1} &= \\
-    k_{2} &= \\
-    k_{3} &= \\
-    k_{4} &= 
+    k_{1} &= -\frac{m_{\mathrm{b}}^{2}\ell^{2}g}{\det(\mathbf{M})} \\
+    k_{2} &= \frac{(m_{\mathrm{b}}+m_{\mathrm{w}}+\frac{I_{\mathrm{w}}}{r_{\mathrm{w}}^2})m_{\mathrm{b}}g\ell}{\det(\mathbf{M})} \\
+    k_{3} &= \frac{-\frac{(I_{\mathrm{b}}+m_{\mathrm{b}}\ell^2)}{r_{\mathrm{w}}}-m_{\mathrm{b}}\ell}{\det(\mathbf{M})} \\
+    k_{4} &= \frac{(m_{\mathrm{b}}+m_{\mathrm{w}}+\frac{I_{\mathrm{w}}}{r_{\mathrm{w}}^2})+\frac{m_{\mathrm{b}}\ell}{r_{\mathrm{w}}}}{\det(\mathbf{M})}
 \end{align}
 
 \section{Deriving Dynamics Inversion}
