@@ -272,24 +272,9 @@ The derivation begins with the standard state-space equation, except replacing $
 \dot{x}(t) &= \mathbf{A}x(t) + \mathbf{B}u(t) \\
 v &= \mathbf{C}x(t) + \mathbf{D}u(t)
 \end{align}
-Since our system will have a matrix $\mathbf{D}$ with completely $0$ components (meaning there is lag between input and change), we must find another way to relate the input to the change in output. 
-This is done by differentiating the output equation:
-\begin{align}
-\dot{v} &= \mathbf{C}\dot{x}(t) \\
-\dot{v} &= \mathbf{C}(\mathbf{A}x(t) + \mathbf{B}u(t))
-\end{align}
-We don't have a desired change in output, so we introduce an arbitrary time constant $\tau$ for a discrete derivative:
-\begin{align}
-\dot{v} &= \frac{v-y(t)}{\tau} \\
-\frac{v-y(t)}{ \tau} &= \mathbf{C}(\mathbf{A}x(t) + \mathbf{B}u(t))
-\end{align}
-Now that the equation is fully derived, we can extract a formula for $u(t)$ in terms of the other variables:
-\begin{align}
-\mathbf{C}^{-1}\frac{v-y(t)}{ \tau} &= \mathbf{A}x(t) + \mathbf{B}u(t) \\
-\mathbf{C}^{-1}\frac{v-y(t)}{ \tau} - \mathbf{A}x(t) &= \mathbf{B}u(t) \\
-\mathbf{B}^{-1}\mathbf{C}^{-1}\frac{v-y(t)}{ \tau} - \mathbf{A}x(t)) &= u(t) \\
-u(t) &= \frac{\mathbf{B}^{-1}\mathbf{C}^{-1}(v-y(t))-\mathbf{A}\mathbf{B}^{-1}\tau x(t)}{ \tau}
-\end{align}
+Since our system will have a matrix $\mathbf{D}$ with completely $0$ components (meaning there is lag between input and change), 
+we must find another way to relate the input to the change in output. Recall that this system's inputs relate between the system's 
+moment from the motor and angular acceleration. As a result, we must differentiate the $y(t)$ equation twice to have a relation between $y(t)$ and $u(t)$.
 
 \subsection{Addressing Matrix Pseudo-Inversions}
 
