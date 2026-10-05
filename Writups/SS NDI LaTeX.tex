@@ -275,6 +275,27 @@ v &= \mathbf{C}x(t) + \mathbf{D}u(t)
 Since our system will have a matrix $\mathbf{D}$ with completely $0$ components (meaning there is lag between input and change), 
 we must find another way to relate the input to the change in output. Recall that this system's inputs relate between the system's 
 moment from the motor and angular acceleration. As a result, we must differentiate the $y(t)$ equation twice to have a relation between $y(t)$ and $u(t)$.
+\begin{align}
+\ddot{v} &= \mathbf{C}\ddot{x}(t) \\
+\ddot{x}(t) &= \mathbf{A}\dot{x}(t) + \mathbf{B}\dot{u} \\
+\ddot{x}(t) &= \mathbf{A}^{2}x(t) + \mathbf{A}\mathbf{B}u(t) + \mathbf{B}\dot{u} \\
+\ddot{v} &= \mathbf{C}\mathbf{A}^{2}x(t) + \mathbf{C}\mathbf{A}\mathbf{B}u(t) + \mathbf{C}\mathbf{B}\dot{u}
+\end{align}
+The matrix $\mathbf{C}\mathbf{B}$ is equal to $\mathbf{0}$, so we can remove the {\dot{u}(t)} term, 
+and we must sub in an actual value for $\ddot{v}$.
+\begin{align}
+\dot{v} &= \frac{v-y(t)}{\tau} \\
+\ddot{v} &= \frac{v-y(t) -\tau\dot{y}{\tau^{2}} \\
+\frac{v-y(t) -\tau\dot{y}{\tau^{2}} &= \mathbf{C}\mathbf{A}^{2}x(t) + \mathbf{C}\mathbf{A}\mathbf{B}u(t)
+\end{align}
+Now we will simplify for a $u(t)$ expression:
+\begin{align}
+\frac{v-y(t) -\tau\dot{y}}{\tau^{2}} - \mathbf{C}\mathbf{A}^{2}x(t) &= \mathbf{C}\mathbf{A}\mathbf{B}u(t) \\
+u(t) &= \frac{(\mathbf{C}\mathbf{A}\mathbf{B})^{-1}v-y(t) - 
+(\mathbf{C}\mathbf{A}\mathbf{B})^{-1}\tau\dot{y}}{\tau^{2} - 
+(\mathbf{C}\mathbf{A}\mathbf{B})^{-1}\mathbf{C}\mathbf{A}^{2}\tau^{2}x(t)}{\tau^{2}}
+\end{align}
+
 
 \subsection{Addressing Matrix Pseudo-Inversions}
 
@@ -297,11 +318,6 @@ is a diagonal matrix representing scaling;
 \mathbf{A}^{\dagger} = \mathbf{V}\Sigma^{\dagger}\mathbf{U}^{T}
 \end{align}
 Where $\Sigma^{\dagger}$ is made up of the reciprocals of the elements of $\Sigma$
-
-Given this, we may update our dynamics inversion equation:
-\begin{align}
-u(t) &= \frac{\mathbf{B}^{\dagger}\mathbf{C}^{\dagger}(v-y(t))-\mathbf{A}\mathbf{B}^{\dagger}\tau x(t)}{\tau}
-\end{align}
 
 
 
