@@ -87,7 +87,9 @@ The generalized coordinates are
     \qquad
     q_2 = \theta,
     \qquad
-    q_3 = \phi_{\mathrm w},
+    q_3 = \psi,
+    \qquad
+    q_4 = \phi_{\mathrm w},
     \label{eq:generalized_coordinates}
 \end{equation}
 where $\phi_{\mathrm w}$ is the angular position of the wheel.
@@ -169,7 +171,7 @@ The corresponding correction term is
     \label{eq:correction_kinetic_energy}
 \end{equation}
 
-The rotational kinetic energy of the pendulum body is
+The $\theta$ directional rotational kinetic energy of the pendulum body is
 \begin{equation}
     T_{\mathrm b,rot}
     =
@@ -178,6 +180,18 @@ The rotational kinetic energy of the pendulum body is
     \dot{\theta}^{\,2},
     \label{eq:body_rotational_energy}
 \end{equation}
+The $\psi$ directional rotational kinetic energy of the wheel is
+\begin{align}
+    T_{\mathrm{\psi,rot}}
+    =
+    \frac{1}{2}
+    \dot{\psi}^{\,2}
+    \left(
+        \sin^2\theta
+        (I_{\mathrm{w}:1}+I_{\mathrm{b}:1})
+        +\cos^2\theta(I_{\mathrm{w}:3}+I_{\mathrm{b}:3})
+    \right)
+\end{align}
 and the rotational kinetic energy of the wheel is
 \begin{equation}
     T_{\mathrm w,rot}
@@ -198,6 +212,8 @@ Thus, the total kinetic energy is
     +
     T_{\mathrm b,rot}
     +
+    T_{\mathrm{\psi,rot}}
+    +
     T_{\mathrm w,rot}
     \nonumber\\
     &=
@@ -212,17 +228,27 @@ Thus, the total kinetic energy is
     +
     \frac{1}{2}
     \left(
-        I_{\mathrm b}
+        I_{\mathrm{b}:2}
         +
-        m_{\mathrm b}\ell^2
+        m_{\mathrm{b}}\ell^2
     \right)
     \dot{\theta}^{\,2}
     \nonumber\\
     &\quad
     +
     \frac{1}{2}
-    I_{\mathrm w}
-    \dot{\phi}_{\mathrm w}^{\,2}.
+    I_{\mathrm{w}:2}
+    \dot{\phi}_{\mathrm w}^{\,2}
+    \nonumber\\
+    &\quad
+    +
+    \frac{1}{2}
+    \dot{\psi}^{\,2}
+    \left(
+        \sin^2\theta
+        (I_{\mathrm{w}:1}+I_{\mathrm{b}:1} + m_{\mathrm b}\ell^2)
+        +\cos^2\theta(I_{\mathrm{w}:3}+I_{\mathrm{b}:3})
+    \right).
     \label{eq:total_kinetic_energy}
 \end{align}
 
@@ -249,11 +275,21 @@ Applying the rolling constraint gives
     +
     \frac{1}{2}
     \left(
-        I_{\mathrm b}
+        I_{\mathrm{b}:2}
         +
         m_{\mathrm b}\ell^2
     \right)
-    \dot{\theta}^{\,2}.
+    \dot{\theta}^{\,2}
+    \nonumber\\
+    &\quad
+    +
+    \frac{1}{2}
+    \dot{\psi}^{\,2}
+    \left(
+        \sin^2\theta
+        (I_{\mathrm{w}:1}+I_{\mathrm{b}:1} + m_{\mathrm b}\ell^2)
+        +\cos^2\theta(I_{\mathrm{w}:3}+I_{\mathrm{b}:3})
+    \right).
     \label{eq:constrained_kinetic_energy}
 \end{align}
 
@@ -327,14 +363,15 @@ Using \eqref{eq:constrained_kinetic_energy} and
 \subsection{Equations of Motion}
 
 The motor applies equal and opposite torques to the wheel and pendulum
-body. Let $M_{\mathrm{mot}}$ denote the motor torque, with positive
-torque defined in the positive $\theta$ direction on the pendulum body.
+body. Let $M_{\mathrm{lw}}$ and $M_{\mathrm{rw}}$ denote the motor torque from each motor, 
+with positive torque defined in the positive $\theta$ direction on the pendulum body.
 
 The generalized motor torque acting on the pendulum is therefore
 \begin{equation}
     Q_{\theta}
     =
-    M_{\mathrm{mot}}.
+    M_{\mathrm{lw}}
+    + M_{\mathrm{rw}}
     \label{eq:pendulum_motor_torque}
 \end{equation}
 
@@ -343,7 +380,7 @@ motor torques, the corresponding wheel torque is
 \begin{equation}
     Q_{\phi_{\mathrm w}}
     =
-    -M_{\mathrm{mot}}.
+    -M_{\mathrm{lw}} - M_{\mathrm{rw}}.
     \label{eq:wheel_motor_torque}
 \end{equation}
 
@@ -352,10 +389,26 @@ effective generalized force in the $x$ direction of
 \begin{equation}
     Q_x
     =
-    -\frac{M_{\mathrm{mot}}}{r_{\mathrm w}}.
+    -\frac{M_{\mathrm{lw}} + M_{\mathrm{rw}}}{r_{\mathrm w}}.
     \label{eq:effective_motor_force}
 \end{equation}
 
+The difference in motor torques between the left and right wheels creates a net yaw 
+torque on the robot, producing an effective generalized force for $\psi$.
+\begin{align}
+    Q_{\psi}
+    =
+    \frac{
+    r_{\mathrm w}
+    \left(
+        M_{\mathrm{rw}}
+        -
+        M_{\mathrm{lw}}
+    \right)
+    }
+    {w_{\mathrm{axis}}}
+    .
+\end{align}
 The signs in these equations follow the convention that positive
 $\theta$ and positive $M_{\mathrm{mot}}$ correspond to clockwise
 rotation of the pendulum from the upright position.

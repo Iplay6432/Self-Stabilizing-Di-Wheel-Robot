@@ -281,18 +281,18 @@ moment from the motor and angular acceleration. As a result, we must differentia
 \ddot{x}(t) &= \mathbf{A}^{2}x(t) + \mathbf{A}\mathbf{B}u(t) + \mathbf{B}\dot{u} \\
 \ddot{v} &= \mathbf{C}\mathbf{A}^{2}x(t) + \mathbf{C}\mathbf{A}\mathbf{B}u(t) + \mathbf{C}\mathbf{B}\dot{u}
 \end{align}
-The matrix $\mathbf{C}\mathbf{B}$ is equal to $\mathbf{0}$, so we can remove the {\dot{u}(t)} term, 
+The matrix $\mathbf{C}\mathbf{B}$ is equal to $\mathbf{0}$, so we can remove the $\dot{u}(t)$ term, 
 and we must sub in an actual value for $\ddot{v}$.
 \begin{align}
 \dot{v} &= \frac{v-y(t)}{\tau} \\
-\ddot{v} &= \frac{v-y(t) -\tau\dot{y}{\tau^{2}} \\
-\frac{v-y(t) -\tau\dot{y}{\tau^{2}} &= \mathbf{C}\mathbf{A}^{2}x(t) + \mathbf{C}\mathbf{A}\mathbf{B}u(t)
+\ddot{v} &= \frac{v-y(t) -\tau\dot{y}}{\tau^{2}} \\
+\frac{v-y(t) -\tau\dot{y}}{\tau^{2}} &= \mathbf{C}\mathbf{A}^{2}x(t) + \mathbf{C}\mathbf{A}\mathbf{B}u(t)
 \end{align}
 Now we will simplify for a $u(t)$ expression:
 \begin{align}
-\frac{v-y(t) -\tau\dot{y}}{\tau^{2}} - \mathbf{C}\mathbf{A}^{2}x(t) &= \mathbf{C}\mathbf{A}\mathbf{B}u(t) \\
-u(t) &= \frac{(\mathbf{C}\mathbf{A}\mathbf{B})^{-1}v-y(t) - 
-(\mathbf{C}\mathbf{A}\mathbf{B})^{-1}\tau\dot{y}}{\tau^{2} - 
+& \frac{v-y(t) -\tau\dot{y}}{\tau^{2}} - \mathbf{C}\mathbf{A}^{2}x(t) = \mathbf{C}\mathbf{A}\mathbf{B}u(t) \\
+&u(t) = \frac{(\mathbf{C}\mathbf{A}\mathbf{B})^{-1}v-(\mathbf{C}\mathbf{A}\mathbf{B})^{-1}y(t) - 
+(\mathbf{C}\mathbf{A}\mathbf{B})^{-1}\tau\dot{y} - 
 (\mathbf{C}\mathbf{A}\mathbf{B})^{-1}\mathbf{C}\mathbf{A}^{2}\tau^{2}x(t)}{\tau^{2}}
 \end{align}
 
