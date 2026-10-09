@@ -11,7 +11,7 @@
 
 \section{Lagrangian Formulation}
 
-The dynamics of the inverted pendulum are derived using the
+The dynamics of the two-wheeled inverted pendulum are derived using the
 Euler--Lagrange formulation. The Lagrangian is defined as
 \begin{equation}
     \mathcal{L} = T - V,
@@ -36,46 +36,58 @@ Euler--Lagrange equations are
     \label{eq:euler_lagrange}
 \end{equation}
 where $Q_i$ is the generalized nonconservative force associated with
-$q_i$.
+$q_i$. Because the no-lateral-slip condition is nonholonomic, the
+equations for $x$ and $\psi$ require additional terms; these are derived
+in the equations-of-motion subsection.
 
 \subsection{Coordinate System}
 
 The system is described using an inertial Cartesian coordinate frame
-$\mathcal{F}_I$. The $x$ axis is horizontal and positive to the right,
-while the $z$ axis is vertical and positive upward.
+$\mathcal{F}_I$ with axes $(X,Y,Z)$, where $Z$ is vertical and positive
+upward. A heading frame $\mathcal{F}_H$ has its origin at the midpoint of
+the wheel axle. Its $x_H$ axis points forward along the robot heading, its
+$y_H$ axis points to the left, and its $z_H$ axis is parallel to $Z$.
 
-The position of the wheel axle is
+The position of the axle midpoint is
 \begin{equation}
-    \bm{r}_{\mathrm{w}}
+    \bm{r}_{\mathrm{a}}
     =
     \begin{bmatrix}
-        x \\
+        X \\
+        Y \\
         z
     \end{bmatrix},
-    \label{eq:wheel_position}
+    \label{eq:axle_position}
 \end{equation}
-where $z$ is constant.
+where $z$ is constant. The heading angle $\psi$ is the rotation of
+$\mathcal{F}_H$ about $Z$, positive counterclockwise when viewed from above
+(a left turn). The distance traveled along the heading is $x$, defined by
+\begin{equation}
+    \dot{x} = \dot{X}\cos\psi + \dot{Y}\sin\psi .
+    \label{eq:x_definition}
+\end{equation}
+Note that $x$ is a path length and not an inertial Cartesian coordinate.
 
 The center of mass of the pendulum body is located at
 \begin{equation}
     \bm{r}_{\mathrm{b}}
     =
+    \bm{r}_{\mathrm{a}}
+    +
+    \ell
     \begin{bmatrix}
-        x_{\mathrm b} \\
-        z_{\mathrm b}
-    \end{bmatrix}
-    =
-    \begin{bmatrix}
-        x + \ell\sin\theta \\
-        z + \ell\cos\theta
+        \sin\theta\cos\psi \\
+        \sin\theta\sin\psi \\
+        \cos\theta
     \end{bmatrix},
     \label{eq:body_position}
 \end{equation}
 where $\ell$ is the distance from the wheel axle to the center of mass
 of the pendulum body.
 
-The angle $\theta$ is measured clockwise from the positive $z$ axis.
-Therefore,
+The pitch angle $\theta$ is measured clockwise from the positive $Z$ axis
+when viewed with $x_H$ pointing to the right, i.e., positive $\theta$ tilts
+the body forward. Therefore,
 \begin{equation}
     \theta = 0
 \end{equation}
@@ -84,67 +96,98 @@ corresponds to the upright configuration of the inverted pendulum.
 The generalized coordinates are
 \begin{equation}
     q_1 = x,
-    \qquad
+    \quad
     q_2 = \theta,
-    \qquad
+    \quad
     q_3 = \psi,
-    \qquad
-    q_4 = \phi_{\mathrm w},
+    \quad
+    q_4 = \phi_{\mathrm l},
+    \quad
+    q_5 = \phi_{\mathrm r},
     \label{eq:generalized_coordinates}
 \end{equation}
-where $\phi_{\mathrm w}$ is the angular position of the wheel.
+where $\phi_{\mathrm l}$ and $\phi_{\mathrm r}$ are the \emph{absolute}
+(inertial-frame) angular positions of the left and right wheels, positive
+for forward rolling. If wheel angles are measured relative to the body
+(e.g., by encoders), then $\phi=\phi^{\mathrm{rel}}+\theta$.
 
-The wheel angular velocity is
+The wheel angular velocities are
 \begin{equation}
-    \omega_{\mathrm w}
+    \omega_{\mathrm l}
     =
-    \dot{\phi}_{\mathrm w}.
+    \dot{\phi}_{\mathrm l},
+    \qquad
+    \omega_{\mathrm r}
+    =
+    \dot{\phi}_{\mathrm r}.
     \label{eq:wheel_angular_velocity}
 \end{equation}
 
-\subsection{Rolling Constraint}
+\subsection{Rolling and Nonholonomic Constraints}
 
-Assuming pure rolling without slipping, the wheel translational and
-rotational velocities satisfy
+Assuming pure rolling without slipping, the wheel velocities satisfy
 \begin{equation}
     \dot{x}
     =
-    r_{\mathrm w}\dot{\phi}_{\mathrm w},
+    \frac{r_{\mathrm w}}{2}
+    \left(\dot{\phi}_{\mathrm r}+\dot{\phi}_{\mathrm l}\right),
+    \qquad
+    \dot{\psi}
+    =
+    \frac{r_{\mathrm w}}{w_{\mathrm{axis}}}
+    \left(\dot{\phi}_{\mathrm r}-\dot{\phi}_{\mathrm l}\right),
     \label{eq:rolling_constraint_velocity}
 \end{equation}
-where $r_{\mathrm w}$ is the wheel radius.
-
-The corresponding position constraint is
+where $r_{\mathrm w}$ is the wheel radius and $w_{\mathrm{axis}}$ is the
+distance between the left and right wheels. The corresponding position
+constraints are
 \begin{equation}
-    x-r_{\mathrm w}\phi_{\mathrm w}=C,
+    x-\frac{r_{\mathrm w}}{2}\left(\phi_{\mathrm r}+\phi_{\mathrm l}\right)=C_x,
+    \qquad
+    \psi-\frac{r_{\mathrm w}}{w_{\mathrm{axis}}}\left(\phi_{\mathrm r}-\phi_{\mathrm l}\right)=C_\psi,
     \label{eq:rolling_constraint_position}
 \end{equation}
-where $C$ is a constant determined by the initial configuration.
+where $C_x$ and $C_\psi$ are constants determined by the initial
+configuration.
 
-Because the rolling constraint eliminates one degree of freedom,
-$\phi_{\mathrm w}$ may be eliminated from the final equations of motion
-using
+Because the rolling constraints eliminate two degrees of freedom,
+$\phi_{\mathrm l}$ and $\phi_{\mathrm r}$ may be eliminated from the final
+equations of motion using
 \begin{equation}
-    \dot{\phi}_{\mathrm w}
+    \dot{\phi}_{\mathrm{r,l}}
     =
-    \frac{\dot{x}}{r_{\mathrm w}},
-    \qquad
-    \ddot{\phi}_{\mathrm w}
-    =
-    \frac{\ddot{x}}{r_{\mathrm w}}.
+    \frac{1}{r_{\mathrm w}}
+    \left(
+        \dot{x}
+        \pm
+        \frac{w_{\mathrm{axis}}}{2}\dot{\psi}
+    \right).
     \label{eq:rolling_constraint_acceleration}
+\end{equation}
+In addition, the wheels cannot slip sideways, so the lateral velocity $u$ of
+the axle midpoint in $\mathcal{F}_H$ satisfies the nonholonomic constraint
+\begin{equation}
+    u = -\dot{X}\sin\psi + \dot{Y}\cos\psi = 0 .
+    \label{eq:nonholonomic}
 \end{equation}
 
 \subsection{Kinetic Energy}
 
-The translational kinetic energy of the wheel and pendulum body can
-first be represented using the combined mass and the horizontal
-velocity of the wheel axis. Since $z$ is constant,
-\begin{equation*}
-    \dot{z}=0.
-\end{equation*}
-
-The translational kinetic energy is therefore
+Let $u$ temporarily denote the lateral velocity of the axle midpoint; it is
+set to zero after differentiation. The velocity of the pendulum-body center
+of mass, expressed in $\mathcal{F}_H$, has components
+\begin{equation}
+    \bm{v}_{\mathrm b}
+    =
+    \begin{bmatrix}
+        \dot{x} + \ell\dot{\theta}\cos\theta \\
+        u + \ell\dot{\psi}\sin\theta \\
+        -\ell\dot{\theta}\sin\theta
+    \end{bmatrix}.
+    \label{eq:body_velocity}
+\end{equation}
+Setting $u=0$ and using $\dot z=0$, the translational kinetic energy of the
+wheel assembly and pendulum body is
 \begin{equation}
     T_{\mathrm{trans}}
     =
@@ -153,12 +196,9 @@ The translational kinetic energy is therefore
     \dot{x}^{\,2},
     \label{eq:translational_kinetic_energy}
 \end{equation}
-where $m_{\mathrm b}$ and $m_{\mathrm w}$ are the masses of the
-pendulum body and wheel assembly, respectively.
-
-This expression does not account for the additional translational motion
-of the pendulum body center of mass caused by its angular displacement.
-The corresponding correction term is
+where $m_{\mathrm b}$ is the mass of the pendulum body and $m_{\mathrm w}$ is
+the combined mass of both wheels. The additional translational energy of the
+pendulum-body center of mass due to its angular displacement is
 \begin{equation}
     T_{\mathrm{corr}}
     =
@@ -171,38 +211,108 @@ The corresponding correction term is
     \label{eq:correction_kinetic_energy}
 \end{equation}
 
-The $\theta$ directional rotational kinetic energy of the pendulum body is
+The pitch rotational kinetic energy of the pendulum body is
 \begin{equation}
-    T_{\mathrm b,rot}
+    T_{\mathrm b,\theta}
     =
     \frac{1}{2}
-    I_{\mathrm b}
-    \dot{\theta}^{\,2},
+    I_{\mathrm b:2}
+    \dot{\theta}^{\,2}.
     \label{eq:body_rotational_energy}
 \end{equation}
-The $\psi$ directional rotational kinetic energy of the wheel is
-\begin{align}
-    T_{\mathrm{\psi,rot}}
+The yaw kinetic energy of the pendulum body is
+\begin{equation}
+    T_{\mathrm b,\psi}
     =
     \frac{1}{2}
     \dot{\psi}^{\,2}
     \left(
         \sin^2\theta
-        (I_{\mathrm{w}:1}+I_{\mathrm{b}:1})
-        +\cos^2\theta(I_{\mathrm{w}:3}+I_{\mathrm{b}:3})
-    \right)
-\end{align}
-and the rotational kinetic energy of the wheel is
+        \left(I_{\mathrm{b}:1}+m_{\mathrm b}\ell^2\right)
+        +\cos^2\theta\, I_{\mathrm{b}:3}
+    \right),
+    \label{eq:body_yaw_energy}
+\end{equation}
+where the $m_{\mathrm b}\ell^2\sin^2\theta$ term arises from the lateral
+motion of the center of mass during yaw. The wheels do not pitch with
+$\theta$, so their yaw inertia is constant:
 \begin{equation}
-    T_{\mathrm w,rot}
+    T_{\mathrm w,\psi}
+    =
+    \frac{1}{2}
+    \dot{\psi}^{\,2}
+    \left(
+        2I_{\mathrm{w,d}}
+        +
+        \frac{m_{\mathrm w}w_{\mathrm{axis}}^{\,2}}{4}
+    \right),
+    \label{eq:wheel_yaw_energy}
+\end{equation}
+where $I_{\mathrm{w,d}}$ is the inertia of one wheel about a diameter, and
+the second term is the parallel-axis contribution of the two wheels. The
+wheel spin energy is
+\begin{equation}
+    T_{\mathrm w,\mathrm{spin}}
     =
     \frac{1}{2}
     I_{\mathrm w}
-    \dot{\phi}_{\mathrm w}^{\,2}.
+    \left(
+        \dot{\phi}_{\mathrm l}^{\,2}
+        +
+        \dot{\phi}_{\mathrm r}^{\,2}
+    \right)
+    =
+    \frac{I_{\mathrm w}}{r_{\mathrm w}^{\,2}}\dot{x}^{\,2}
+    +
+    \frac{1}{2}
+    \frac{I_{\mathrm w}w_{\mathrm{axis}}^{\,2}}{2r_{\mathrm w}^{\,2}}
+    \dot{\psi}^{\,2},
     \label{eq:wheel_rotational_energy}
 \end{equation}
+where $I_{\mathrm w}$ is the spin inertia of a single wheel about its axle
+and \eqref{eq:rolling_constraint_acceleration} has been applied.
 
-Thus, the total kinetic energy is
+Define the effective translational mass, the effective pitch inertia, and
+the yaw inertia
+\begin{align}
+    m_{\mathrm{eff}}
+    &=
+    m_{\mathrm b}+m_{\mathrm w}+\frac{2I_{\mathrm w}}{r_{\mathrm w}^{\,2}},
+    \label{eq:m_eff}
+    \\
+    I_{\theta}
+    &=
+    I_{\mathrm b:2}+m_{\mathrm b}\ell^2,
+    \label{eq:I_theta}
+    \\
+    \mathcal{J}(\theta)
+    &=
+    J_0 + \Delta I\,\sin^2\theta,
+    \label{eq:yaw_inertia}
+\end{align}
+with
+\begin{align}
+    J_{\mathrm w}
+    &=
+    2I_{\mathrm{w,d}}
+    +
+    \frac{m_{\mathrm w}w_{\mathrm{axis}}^{\,2}}{4}
+    +
+    \frac{I_{\mathrm w}w_{\mathrm{axis}}^{\,2}}{2r_{\mathrm w}^{\,2}},
+    \nonumber\\
+    J_0
+    &=
+    J_{\mathrm w} + I_{\mathrm b:3},
+    \nonumber\\
+    \Delta I
+    &=
+    I_{\mathrm b:1} + m_{\mathrm b}\ell^2 - I_{\mathrm b:3}.
+    \label{eq:yaw_inertia_constants}
+\end{align}
+Thus $\mathcal{J}(\theta)$ equals the sum of the wheel yaw inertia and
+\eqref{eq:body_yaw_energy}.
+
+The total kinetic energy, after applying the rolling constraints, is
 \begin{align}
     T
     &=
@@ -210,15 +320,17 @@ Thus, the total kinetic energy is
     +
     T_{\mathrm{corr}}
     +
-    T_{\mathrm b,rot}
+    T_{\mathrm b,\theta}
     +
-    T_{\mathrm{\psi,rot}}
+    T_{\mathrm b,\psi}
     +
-    T_{\mathrm w,rot}
+    T_{\mathrm w,\psi}
+    +
+    T_{\mathrm w,\mathrm{spin}}
     \nonumber\\
     &=
     \frac{1}{2}
-    (m_{\mathrm b}+m_{\mathrm w})
+    m_{\mathrm{eff}}
     \dot{x}^{\,2}
     +
     m_{\mathrm b}\ell
@@ -227,71 +339,25 @@ Thus, the total kinetic energy is
     &\quad
     +
     \frac{1}{2}
-    \left(
-        I_{\mathrm{b}:2}
-        +
-        m_{\mathrm{b}}\ell^2
-    \right)
+    I_{\theta}
     \dot{\theta}^{\,2}
-    \nonumber\\
-    &\quad
     +
     \frac{1}{2}
-    I_{\mathrm{w}:2}
-    \dot{\phi}_{\mathrm w}^{\,2}
-    \nonumber\\
-    &\quad
-    +
-    \frac{1}{2}
-    \dot{\psi}^{\,2}
-    \left(
-        \sin^2\theta
-        (I_{\mathrm{w}:1}+I_{\mathrm{b}:1} + m_{\mathrm b}\ell^2)
-        +\cos^2\theta(I_{\mathrm{w}:3}+I_{\mathrm{b}:3})
-    \right).
-    \label{eq:total_kinetic_energy}
-\end{align}
-
-Applying the rolling constraint gives
-\begin{align}
-    T
-    &=
-    \frac{1}{2}
-    \left(
-        m_{\mathrm b}
-        +
-        m_{\mathrm w}
-        +
-        \frac{I_{\mathrm w}}{r_{\mathrm w}^{\,2}}
-    \right)
-    \dot{x}^{\,2}
-    \nonumber\\
-    &\quad
-    +
-    m_{\mathrm b}\ell
-    \dot{x}\dot{\theta}\cos\theta
-    \nonumber\\
-    &\quad
-    +
-    \frac{1}{2}
-    \left(
-        I_{\mathrm{b}:2}
-        +
-        m_{\mathrm b}\ell^2
-    \right)
-    \dot{\theta}^{\,2}
-    \nonumber\\
-    &\quad
-    +
-    \frac{1}{2}
-    \dot{\psi}^{\,2}
-    \left(
-        \sin^2\theta
-        (I_{\mathrm{w}:1}+I_{\mathrm{b}:1} + m_{\mathrm b}\ell^2)
-        +\cos^2\theta(I_{\mathrm{w}:3}+I_{\mathrm{b}:3})
-    \right).
+    \mathcal{J}(\theta)
+    \dot{\psi}^{\,2}.
     \label{eq:constrained_kinetic_energy}
 \end{align}
+
+When $u\neq 0$ is retained, the only additional term that survives in the
+derivatives evaluated at $u=0$ comes from the lateral kinetic energy
+$\tfrac12 m_{\mathrm b}\left(u+\ell\dot\psi\sin\theta\right)^2$ of the
+pendulum body, giving
+\begin{equation}
+    \left.\frac{\partial T}{\partial u}\right|_{u=0}
+    =
+    m_{\mathrm b}\ell\,\dot{\psi}\sin\theta .
+    \label{eq:dT_du}
+\end{equation}
 
 \subsection{Potential Energy}
 
@@ -299,13 +365,7 @@ The gravitational potential energy of the pendulum body is
 \begin{equation}
     V
     =
-    m_{\mathrm b}g z_{\mathrm b}.
-    \label{eq:potential_general}
-\end{equation}
-
-Substituting \eqref{eq:body_position} gives
-\begin{equation}
-    V
+    m_{\mathrm b}g Z_{\mathrm b}
     =
     m_{\mathrm b}g
     \left(
@@ -332,16 +392,8 @@ Using \eqref{eq:constrained_kinetic_energy} and
     \mathcal{L}
     &=
     \frac{1}{2}
-    \left(
-        m_{\mathrm b}
-        +
-        m_{\mathrm w}
-        +
-        \frac{I_{\mathrm w}}{r_{\mathrm w}^{\,2}}
-    \right)
+    m_{\mathrm{eff}}
     \dot{x}^{\,2}
-    \nonumber\\
-    &\quad
     +
     m_{\mathrm b}\ell
     \dot{x}\dot{\theta}\cos\theta
@@ -349,111 +401,115 @@ Using \eqref{eq:constrained_kinetic_energy} and
     &\quad
     +
     \frac{1}{2}
-    \left(
-        I_{\mathrm b}
-        +
-        m_{\mathrm b}\ell^2
-    \right)
+    I_{\theta}
     \dot{\theta}^{\,2}
+    +
+    \frac{1}{2}
+    \mathcal{J}(\theta)
+    \dot{\psi}^{\,2}
     -
     m_{\mathrm b}g\ell\cos\theta.
     \label{eq:constrained_lagrangian}
 \end{align}
 
+\subsection{Generalized Forces}
+
+Let $M_{\mathrm{lw}}$ and $M_{\mathrm{rw}}$ denote the torques produced by
+the left and right motors. Each motor applies a torque $M$ to the pendulum
+body in the positive $\theta$ direction and an equal and opposite torque
+$-M$ to its wheel. The virtual work is
+\begin{equation}
+    \delta W
+    =
+    \left(M_{\mathrm{lw}}+M_{\mathrm{rw}}\right)\delta\theta
+    -
+    M_{\mathrm{lw}}\,\delta\phi_{\mathrm l}
+    -
+    M_{\mathrm{rw}}\,\delta\phi_{\mathrm r}.
+    \label{eq:virtual_work}
+\end{equation}
+Substituting the constraints
+$\delta\phi_{\mathrm{r,l}}=\left(\delta x\pm\tfrac{w_{\mathrm{axis}}}{2}\delta\psi\right)/r_{\mathrm w}$
+gives the generalized forces
+\begin{align}
+    Q_{\theta}
+    &=
+    M_{\mathrm{lw}}
+    + M_{\mathrm{rw}},
+    \label{eq:pendulum_motor_torque}
+    \\
+    Q_x
+    &=
+    -\frac{M_{\mathrm{lw}} + M_{\mathrm{rw}}}{r_{\mathrm w}},
+    \label{eq:effective_motor_force}
+    \\
+    Q_{\psi}
+    &=
+    \frac{w_{\mathrm{axis}}}{2r_{\mathrm w}}
+    \left(
+        M_{\mathrm{lw}}
+        -
+        M_{\mathrm{rw}}
+    \right).
+    \label{eq:yaw_torque}
+\end{align}
+Positive $M$ tilts the body forward ($+\theta$) and drives the vehicle
+backward. A larger right-wheel speed turns the robot to the left, which is
+the positive $\psi$ direction. The yaw torque sign follows from
+$\dot\psi = r_{\mathrm w}(\dot\phi_{\mathrm r}-\dot\phi_{\mathrm l})/w_{\mathrm{axis}}$.
+
 \subsection{Equations of Motion}
 
-The motor applies equal and opposite torques to the wheel and pendulum
-body. Let $M_{\mathrm{lw}}$ and $M_{\mathrm{rw}}$ denote the motor torque from each motor, 
-with positive torque defined in the positive $\theta$ direction on the pendulum body.
-
-The generalized motor torque acting on the pendulum is therefore
-\begin{equation}
-    Q_{\theta}
-    =
-    M_{\mathrm{lw}}
-    + M_{\mathrm{rw}}
-    \label{eq:pendulum_motor_torque}
-\end{equation}
-
-Because the wheel and pendulum body experience equal and opposite
-motor torques, the corresponding wheel torque is
-\begin{equation}
-    Q_{\phi_{\mathrm w}}
-    =
-    -M_{\mathrm{lw}} - M_{\mathrm{rw}}.
-    \label{eq:wheel_motor_torque}
-\end{equation}
-
-After applying the rolling constraint, the motor contributes an
-effective generalized force in the $x$ direction of
-\begin{equation}
-    Q_x
-    =
-    -\frac{M_{\mathrm{lw}} + M_{\mathrm{rw}}}{r_{\mathrm w}}.
-    \label{eq:effective_motor_force}
-\end{equation}
-
-The difference in motor torques between the left and right wheels creates a net yaw 
-torque on the robot, producing an effective generalized force for $\psi$.
+Because $x$ and $\psi$ are subject to the nonholonomic constraint
+\eqref{eq:nonholonomic}, the equations for these two coordinates are
+obtained from the Hamel (quasi-velocity) form of Lagrange's equations,
 \begin{align}
-    Q_{\psi}
-    =
-    \frac{
-    r_{\mathrm w}
-    \left(
-        M_{\mathrm{rw}}
-        -
-        M_{\mathrm{lw}}
-    \right)
-    }
-    {w_{\mathrm{axis}}}
-    .
+    \frac{\mathrm{d}}{\mathrm{d}t}
+    \frac{\partial \mathcal{L}}{\partial \dot{x}}
+    -
+    \dot{\psi}
+    \left.\frac{\partial \mathcal{L}}{\partial u}\right|_{u=0}
+    &=
+    Q_x,
+    \label{eq:hamel_x}
+    \\
+    \frac{\mathrm{d}}{\mathrm{d}t}
+    \frac{\partial \mathcal{L}}{\partial \dot{\psi}}
+    +
+    \dot{x}
+    \left.\frac{\partial \mathcal{L}}{\partial u}\right|_{u=0}
+    &=
+    Q_\psi,
+    \label{eq:hamel_psi}
 \end{align}
-The signs in these equations follow the convention that positive
-$\theta$ and positive $M_{\mathrm{mot}}$ correspond to clockwise
-rotation of the pendulum from the upright position.
+while $\theta$ is an ordinary holonomic coordinate and uses
+\eqref{eq:euler_lagrange} directly.
 
 \subsubsection{Translational Equation}
 
-Applying the Euler--Lagrange equation to $x$ gives
-\begin{align}
+The momentum conjugate to $\dot x$ is
+\begin{equation}
     \frac{\partial \mathcal{L}}
     {\partial \dot{x}}
-    &=
-    \left(
-        m_{\mathrm b}
-        +
-        m_{\mathrm w}
-        +
-        \frac{I_{\mathrm w}}{r_{\mathrm w}^{\,2}}
-    \right)
+    =
+    m_{\mathrm{eff}}
     \dot{x}
-    \nonumber\\
-    &\quad
     +
     m_{\mathrm b}\ell
     \dot{\theta}\cos\theta.
     \label{eq:partial_L_partial_xdot}
-\end{align}
+\end{equation}
 
 Taking the time derivative gives
-\begin{align}
+\begin{equation}
     \frac{\mathrm{d}}{\mathrm{d}t}
     \left(
         \frac{\partial \mathcal{L}}
         {\partial \dot{x}}
     \right)
-    &=
-    \left(
-        m_{\mathrm b}
-        +
-        m_{\mathrm w}
-        +
-        \frac{I_{\mathrm w}}{r_{\mathrm w}^{\,2}}
-    \right)
+    =
+    m_{\mathrm{eff}}
     \ddot{x}
-    \nonumber\\
-    &\quad
     +
     m_{\mathrm b}\ell
     \left(
@@ -462,86 +518,67 @@ Taking the time derivative gives
         \dot{\theta}^{\,2}\sin\theta
     \right).
     \label{eq:d_dt_partial_L_partial_xdot}
-\end{align}
-
-Since the Lagrangian does not explicitly depend on $x$,
-\begin{equation}
-    \frac{\partial \mathcal{L}}
-    {\partial x}
-    =
-    0.
-    \label{eq:partial_L_partial_x}
 \end{equation}
 
-Therefore, the translational equation of motion is
+Using \eqref{eq:dT_du} in \eqref{eq:hamel_x}, the translational equation of
+motion is
 \begin{align}
-    &\left(
-        m_{\mathrm b}
-        +
-        m_{\mathrm w}
-        +
-        \frac{I_{\mathrm w}}{r_{\mathrm w}^{\,2}}
-    \right)
+    &m_{\mathrm{eff}}
     \ddot{x}
-    \nonumber\\
-    &\quad
     +
     m_{\mathrm b}\ell
     \cos\theta\,\ddot{\theta}
     -
     m_{\mathrm b}\ell
-    \sin\theta\,\dot{\theta}^{\,2}
+    \sin\theta
+    \left(
+        \dot{\theta}^{\,2}
+        +
+        \dot{\psi}^{\,2}
+    \right)
+    \nonumber\\
+    &\qquad
     =
-    -\frac{M_{\mathrm{mot}}}{r_{\mathrm w}}.
+    -\frac{M_{\mathrm{lw}}+M_{\mathrm{rw}}}{r_{\mathrm w}}.
     \label{eq:translation_eom}
 \end{align}
+The $\dot\psi^2$ term is the centripetal term arising from the lateral offset
+of the center of mass while turning.
 
 \subsubsection{Pendulum Angular Equation}
 
 Applying the Euler--Lagrange equation to $\theta$ gives
-\begin{align}
+\begin{equation}
     \frac{\partial \mathcal{L}}
     {\partial \dot{\theta}}
-    &=
+    =
     m_{\mathrm b}\ell
     \dot{x}\cos\theta
-    \nonumber\\
-    &\quad
     +
-    \left(
-        I_{\mathrm b}
-        +
-        m_{\mathrm b}\ell^2
-    \right)
+    I_{\theta}
     \dot{\theta}.
     \label{eq:partial_L_partial_thetadot}
-\end{align}
+\end{equation}
 
 Taking the time derivative gives
-\begin{align}
+\begin{equation}
     \frac{\mathrm{d}}{\mathrm{d}t}
     \left(
         \frac{\partial \mathcal{L}}
         {\partial \dot{\theta}}
     \right)
-    &=
+    =
     m_{\mathrm b}\ell
     \left(
         \ddot{x}\cos\theta
         -
         \dot{x}\dot{\theta}\sin\theta
     \right)
-    \nonumber\\
-    &\quad
     +
-    \left(
-        I_{\mathrm b}
-        +
-        m_{\mathrm b}\ell^2
-    \right)
+    I_{\theta}
     \ddot{\theta}.
     \label{eq:d_dt_partial_L_partial_thetadot}
-\end{align}
+\end{equation}
 
 The partial derivative with respect to $\theta$ is
 \begin{align}
@@ -551,33 +588,71 @@ The partial derivative with respect to $\theta$ is
     -m_{\mathrm b}\ell
     \dot{x}\dot{\theta}\sin\theta
     +
+    \frac{1}{2}\dot{\psi}^{\,2}\,
+    \Delta I\,\sin2\theta
+    \nonumber\\
+    &\quad
+    +
     m_{\mathrm b}g\ell\sin\theta.
     \label{eq:partial_L_partial_theta}
 \end{align}
 
-Therefore, the angular equation of motion is
+Therefore, the pitch ($\theta$) equation of motion is
 \begin{align}
-    &\left(
-        I_{\mathrm b}
-        +
-        m_{\mathrm b}\ell^2
-    \right)
+    &I_{\theta}
     \ddot{\theta}
     +
     m_{\mathrm b}\ell
     \cos\theta\,\ddot{x}
-    \nonumber\\
-    &\qquad
+    -
+    \frac{1}{2}\dot{\psi}^{\,2}\,
+    \Delta I\,\sin2\theta
     -
     m_{\mathrm b}g\ell\sin\theta
+    \nonumber\\
+    &\qquad
     =
-    M_{\mathrm{mot}}.
+    M_{\mathrm{lw}} + M_{\mathrm{rw}}.
     \label{eq:angular_eom}
 \end{align}
+The first term represents the rotational inertia of the pendulum body, the
+second represents translational--rotational coupling, the third represents
+yaw-induced torque, and the fourth represents the gravitational torque.
 
-The first term represents the rotational inertia of the pendulum
-body, the second represents translational--rotational coupling, and
-the third represents the gravitational torque.
+\subsubsection{Yaw Equation of Motion}
+
+The momentum conjugate to $\dot\psi$ is
+\begin{equation}
+    \frac{\partial \mathcal{L}}{\partial \dot{\psi}}
+    =
+    \mathcal{J}(\theta)\,\dot{\psi}.
+\end{equation}
+Taking the time derivative and using $\mathrm{d}\mathcal{J}/\mathrm{d}t=\Delta I\sin2\theta\,\dot\theta$ gives
+\begin{equation}
+    \frac{\mathrm{d}}{\mathrm{d}t}\frac{\partial \mathcal{L}}{\partial \dot{\psi}}
+    =
+    \mathcal{J}(\theta)\,\ddot{\psi}
+    +
+    \Delta I\,\sin2\theta\,\dot{\theta}\dot{\psi}.
+\end{equation}
+Using \eqref{eq:dT_du} in \eqref{eq:hamel_psi}, the yaw equation of motion is
+\begin{equation}
+    \mathcal{J}(\theta)\,\ddot{\psi}
+    +
+    \Delta I\,\sin2\theta\,\dot{\theta}\dot{\psi}
+    +
+    m_{\mathrm b}\ell\sin\theta\,\dot{x}\dot{\psi}
+    =
+    \frac{w_{\mathrm{axis}}}{2r_{\mathrm w}}
+    \left(
+        M_{\mathrm{lw}}
+        -
+        M_{\mathrm{rw}}
+    \right).
+    \label{eq:yaw_eom}
+\end{equation}
+The second term is the gyroscopic coupling between pitch rate and yaw rate,
+and the third term comes from the nonholonomic constraint.
 
 \subsection{Symbol and Coordinate Definitions}
 
@@ -587,42 +662,60 @@ the third represents the gravitational torque.
 \label{tab:symbol_definitions}
 \renewcommand{\arraystretch}{1.1}
 \begin{tabular}{
-    >{\raggedright\arraybackslash}p{0.20\linewidth}
-    >{\raggedright\arraybackslash}p{0.70\linewidth}
+    >{\raggedright\arraybackslash}p{0.22\linewidth}
+    >{\raggedright\arraybackslash}p{0.68\linewidth}
 }
 \toprule
 Symbol & Definition \\
 \midrule
 
 $\mathcal{F}_I$
-& Inertial Cartesian coordinate frame. \\
+& Inertial Cartesian frame with axes $(X,Y,Z)$; $Z$ positive upward. \\
 
-$x$
-& Horizontal position of the wheel axle, positive to the right. \\
+$\mathcal{F}_H$
+& Heading frame at the axle midpoint: $x_H$ forward, $y_H$ left,
+$z_H$ vertical. \\
+
+$X,Y$
+& Inertial horizontal position of the axle midpoint. \\
 
 $z$
-& Vertical position of the wheel axle, positive upward; treated as
-constant. \\
+& Height of the axle above the ground; constant. \\
+
+$x$
+& Distance traveled along the heading, $\dot{x}=\dot{X}\cos\psi+\dot{Y}\sin\psi$
+(path length, not an inertial coordinate). \\
+
+$u$
+& Lateral velocity of the axle midpoint in $\mathcal{F}_H$; constrained to
+zero (no lateral slip), used only to form the nonholonomic terms. \\
+
+$\psi$
+& Heading (yaw) angle about $Z$, positive counterclockwise viewed from
+above (left turn). \\
 
 $\theta$
-& Pendulum-body angle measured clockwise from the positive $z$ axis;
-$\theta=0$ corresponds to the upright configuration. \\
+& Pitch angle of the pendulum body from the positive vertical axis, positive
+forward; $\theta=0$ is upright. \\
 
-$\phi_{\mathrm w}$
-& Angular position of the wheel. \\
+$\phi_{\mathrm l},\phi_{\mathrm r}$
+& Absolute (inertial-frame) angular positions of the left and right wheels,
+positive for forward rolling. \\
 
-$\omega_{\mathrm w}$
-& Wheel angular velocity, $\omega_{\mathrm w}=\dot{\phi}_{\mathrm w}$. \\
+$\omega_{\mathrm l},\omega_{\mathrm r}$
+& Wheel angular velocities, $\omega_{\mathrm{l,r}}=\dot{\phi}_{\mathrm{l,r}}$. \\
 
-$\bm r_{\mathrm w}$
-& Position vector of the wheel axle. \\
+$\bm r_{\mathrm a}$
+& Position vector of the axle midpoint. \\
 
 $\bm r_{\mathrm b}$
 & Position vector of the pendulum-body center of mass. \\
 
-$x_{\mathrm b},z_{\mathrm b}$
-& Horizontal and vertical coordinates of the pendulum-body center
-of mass. \\
+$Z_{\mathrm b}$
+& Vertical coordinate of the pendulum-body center of mass. \\
+
+$\bm v_{\mathrm b}$
+& Velocity of the pendulum-body center of mass in $\mathcal{F}_H$. \\
 
 $\ell$
 & Distance from the wheel axle to the pendulum-body center of mass. \\
@@ -630,18 +723,45 @@ $\ell$
 $r_{\mathrm w}$
 & Wheel radius. \\
 
+$w_{\mathrm{axis}}$
+& Distance between the left and right wheels (track width). \\
+
 $m_{\mathrm b}$
 & Mass of the pendulum body. \\
 
 $m_{\mathrm w}$
-& Mass of the wheel and axle assembly. \\
+& Combined mass of both wheels (each wheel center of mass on the axle). \\
 
-$I_{\mathrm b}$
-& Mass moment of inertia of the pendulum body about its center of mass. \\
+$I_{\mathrm b:1}, I_{\mathrm b:2}, I_{\mathrm b:3}$
+& Principal moments of inertia of the pendulum body about its center of
+mass: axis 1 forward, axis 2 the pitch axis (perpendicular to the plane of
+motion), axis 3 along the body's upright axis. \\
 
 $I_{\mathrm w}$
-& Mass moment of inertia of the wheel and axle assembly about the
-wheel axis. \\
+& Spin moment of inertia of a single wheel about its axle. \\
+
+$I_{\mathrm{w,d}}$
+& Moment of inertia of a single wheel about a diameter (used for yaw). \\
+
+$m_{\mathrm{eff}}$
+& Effective translational mass,
+$m_{\mathrm b}+m_{\mathrm w}+2I_{\mathrm w}/r_{\mathrm w}^2$. \\
+
+$I_\theta$
+& Effective pitch inertia, $I_{\mathrm b:2}+m_{\mathrm b}\ell^2$. \\
+
+$J_{\mathrm w}$
+& Constant wheel yaw inertia,
+$2I_{\mathrm{w,d}}+m_{\mathrm w}w_{\mathrm{axis}}^2/4+I_{\mathrm w}w_{\mathrm{axis}}^2/(2r_{\mathrm w}^2)$. \\
+
+$J_0$
+& Yaw inertia at $\theta=0$, $J_{\mathrm w}+I_{\mathrm b:3}$. \\
+
+$\Delta I$
+& $I_{\mathrm b:1}+m_{\mathrm b}\ell^2-I_{\mathrm b:3}$. \\
+
+$\mathcal{J}(\theta)$
+& Total yaw inertia, $J_0+\Delta I\sin^2\theta$. \\
 
 $g$
 & Gravitational acceleration. \\
@@ -661,11 +781,15 @@ $q_i$
 $Q_i$
 & Generalized nonconservative force associated with $q_i$. \\
 
-$M_{\mathrm{mot}}$
-& Motor torque applied between the wheel and pendulum body. \\
+$M_{\mathrm{lw}},M_{\mathrm{rw}}$
+& Left and right motor torques; each acts on the body in the positive
+$\theta$ direction and on its wheel in the opposite direction. \\
 
-$C$
-& Constant determined by the initial rolling configuration. \\
+$Q_x,Q_\theta,Q_\psi$
+& Generalized forces for $x$, $\theta$, and $\psi$ from the motor torques. \\
+
+$C_x,C_\psi$
+& Constants determined by the initial rolling configuration. \\
 
 $t$
 & Time. \\
