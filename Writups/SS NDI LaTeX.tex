@@ -33,68 +33,114 @@ Besides this, state-space matrices are required for the dynamics inversion appro
 
 Recall the equations of motion for the system produced earlier:
 \begin{align}
-    &\left(
-        m_{\mathrm b}
-        +
-        m_{\mathrm w}
-        +
-        \frac{I_{\mathrm w}}{r_{\mathrm w}^{\,2}}
-    \right)
+    &m_{\mathrm{eff}}
     \ddot{x}
-    \nonumber\\
-    &\quad
     +
     m_{\mathrm b}\ell
     \cos\theta\,\ddot{\theta}
     -
     m_{\mathrm b}\ell
-    \sin\theta\,\dot{\theta}^{\,2}
+    \sin\theta
+    \left(
+        \dot{\theta}^{\,2}
+        +
+        \dot{\psi}^{\,2}
+    \right)
+    \nonumber\\
+    &\qquad
     =
-    -\frac{M_{\mathrm{mot}}}{r_{\mathrm w}}.
+    -\frac{M_{\mathrm{lw}}+M_{\mathrm{rw}}}{r_{\mathrm w}}.
     \label{eq:translation_eom}
 \end{align}
 And
 \begin{align}
-    &\left(
-        I_{\mathrm b}
-        +
-        m_{\mathrm b}\ell^2
-    \right)
+    &I_{\theta}
     \ddot{\theta}
     +
     m_{\mathrm b}\ell
     \cos\theta\,\ddot{x}
-    \nonumber\\
-    &\qquad
+    -
+    \frac{1}{2}\dot{\psi}^{\,2}\,
+    \Delta I\,\sin2\theta
     -
     m_{\mathrm b}g\ell\sin\theta
+    \nonumber\\
+    &\qquad
     =
-    M_{\mathrm{mot}}.
+    M_{\mathrm{lw}} + M_{\mathrm{rw}}.
     \label{eq:angular_eom}
+\end{align}
+And
+\begin{equation}
+    \mathcal{J}(\theta)\,\ddot{\psi}
+    +
+    \Delta I\,\sin2\theta\,\dot{\theta}\dot{\psi}
+    +
+    m_{\mathrm b}\ell\sin\theta\,\dot{x}\dot{\psi}
+    =
+    \frac{w_{\mathrm{axis}}}{2r_{\mathrm w}}
+    \left(
+        M_{\mathrm{lw}}
+        -
+        M_{\mathrm{rw}}
+    \right).
+    \label{eq:yaw_eom}
+\end{equation}
+With shorthands:
+\begin{align}
+    m_{\mathrm{eff}}
+    &=
+    m_{\mathrm b}+m_{\mathrm w}+\frac{2I_{\mathrm w}}{r_{\mathrm w}^{\,2}},
+    \label{eq:m_eff}
+    \\
+    I_{\theta}
+    &=
+    I_{\mathrm b:2}+m_{\mathrm b}\ell^2,
+    \label{eq:I_theta}
+    \\
+    \mathcal{J}(\theta)
+    &=
+    J_0 + \Delta I\,\sin^2\theta,
+    \label{eq:yaw_inertia}
+    \\
+    J_{\mathrm w}
+    &=
+    2I_{\mathrm{w,d}}
+    +
+    \frac{m_{\mathrm w}w_{\mathrm{axis}}^{\,2}}{4}
+    +
+    \frac{I_{\mathrm w}w_{\mathrm{axis}}^{\,2}}{2r_{\mathrm w}^{\,2}},
+    \nonumber\\
+    J_0
+    &=
+    J_{\mathrm w} + I_{\mathrm b:3},
+    \nonumber\\
+    \Delta I
+    &=
+    I_{\mathrm b:1} + m_{\mathrm b}\ell^2 - I_{\mathrm b:3}.
+    \label{eq:yaw_inertia_constants}
 \end{align}
 Remember that the state-space model seeks to represent how the system's state 
 adjusts relative to the inputs existing state, and how the system's output responds to changes 
 in the state. In linear form, we specifically care about behavior very near to a specific point. 
 In the case of our system, we care about the output $\theta$ near the state 
-$[x, \dot{x}, \theta, \dot{\theta}] = [0, 0, 0, 0]$. 
+$[x, \dot{x}, \theta, \dot{\theta}, \psi, \dot{\psi}] = [0, 0, 0, 0, 0, 0]$. 
 Knowing this gives us enough information to  produce our linearized state-space model.
 
 Firstly, we must linearize the equations of motion around the operating point 
-$[x, \dot{x}, \theta, \dot{\theta}] = [0, 0, 0, 0]$. At this point, we note our approximations:
+$[x, \dot{x}, \theta, \dot{\theta}, \psi, \dot{\psi}] = [0, 0, 0, 0, 0, 0]$. At this point, we note our approximations:
 \begin{align}
 cos\theta &\approx 1 \\
 sin\theta &\approx \theta \\
-\dot{\theta}^2 &\approx 0
+sin2\theta &\approx 2\theta \\
+cos^{2}\theta &\approx 0 \\
+sin^{2}\theta &\approx 0 \\
+\dot{\theta}^2 &\approx 0 \\
+\dot{\psi}^2 &\approx 0
 \end{align}
 Applying these approximations to the equations of motion yields the linearized equations:
 \begin{align}
-    &\left(
-        m_{\mathrm b}
-        +
-        m_{\mathrm w}
-        +
-        \frac{I_{\mathrm w}}{r_{\mathrm w}^{\,2}}
-    \right)
+    m_{\mathrm{eff}}
     \ddot{x}
     \nonumber\\
     &\quad
@@ -122,6 +168,8 @@ And
     M_{\mathrm{mot}}.
     \label{eq:angular_eom_linearized}
 \end{align}
+And
+
 
 We begin deriving the state-space model by setting up the state vector and input vector for the linearized system. 
 In our case, the state vector is
