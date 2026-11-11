@@ -36,7 +36,6 @@ void setup() {
 
 void loop() {
 
-
 }
 
 void motorForw(int m, int duty) {
@@ -112,3 +111,6 @@ void pwmWrite(){
   ledcWrite(RIGHT_MOTOR_DUTY_PIN, rightDuty);
 }
 
+int voltage(float volt){
+  return (int)(volt / 12.0 * (pow(2.0, (float(ledcResolution)) - 1.0));
+}
